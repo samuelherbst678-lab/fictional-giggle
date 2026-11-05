@@ -4,535 +4,611 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV Wahl-Infografik Studio 2026</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- html2canvas für 4K Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Chakra Petch', 'sans-serif'],
+                    },
                     colors: {
                         pitch: '#030509',
-                        panel: '#070a12',
-                        cardBg: '#0b0f19',
-                        accent: '#3b82f6'
+                        panel: '#090d16',
+                        accent: '#00f0ff',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #030509; color: #f3f4f6; }
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
+        body { background-color: #030509; color: #f3f4f6; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .tech-font { font-family: 'Chakra Petch', sans-serif; }
+        .pitch-card { background: #070b12; border: 1px solid rgba(255, 255, 255, 0.07); }
+        
+        /* Breaking News Ticker Single-Line Animation */
+        @keyframes tickerMove {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
-        .animate-ticker {
-            display: inline-flex;
+        .ticker-wrap { width: 100%; overflow: hidden; background: #dc2626; height: 38px; }
+        .ticker-move {
+            display: inline-block;
             white-space: nowrap;
-            animation: ticker 30s linear infinite;
+            animation: tickerMove 25s linear infinite;
         }
-        .animate-ticker:hover {
-            animation-play-state: paused;
-        }
+        
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #030509; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen flex flex-col">
 
-    <!-- TOP BREAKING NEWS TICKER -->
-    <div id="tickerContainer" class="bg-red-600 text-white h-10 overflow-hidden relative flex items-center shadow-lg border-b border-red-700 z-50">
-        <div class="bg-red-700 px-4 py-2 font-black text-xs tracking-wider uppercase flex items-center z-10 shadow-r">
-            <span class="inline-block w-2.5 h-2.5 bg-white rounded-full animate-ping mr-2"></span> BREAKING NEWS
+    <!-- BREAKING NEWS TICKER (Einzeilig, rot, durchgehend) -->
+    <div id="ticker-container" class="ticker-wrap flex items-center shadow-lg z-50">
+        <div class="bg-black text-white px-4 h-full flex items-center font-bold text-xs uppercase tracking-widest tech-font flex-shrink-0 z-10 border-r border-red-800">
+            🚨 BREAKING NEWS
         </div>
-        <div class="overflow-hidden whitespace-nowrap flex-1 flex items-center">
-            <div id="tickerContent" class="animate-ticker text-sm font-semibold tracking-wide">
-                <span class="mx-8">• 2026 Wahl-Sondersendung live im Studio</span>
-                <span class="mx-8">• Hochrechnungen zeigen spannendes Kopf-an-Kopf-Rennen</span>
-                <span class="mx-8">• Koalitionsverhandlungen zeichnen sich in ersten Trendanalysen ab</span>
-                <span class="mx-8">• Bleiben Sie dran für die neuesten Resultate und Live-Analysen</span>
+        <div class="overflow-hidden flex-1 relative flex items-center">
+            <div id="ticker-text" class="ticker-move text-white font-semibold text-sm tracking-wide">
+                +++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++ WAHLBETEILIGUNG AUF REKORDNIVEAU +++ ERSTE HOCHRECHNUNGEN ERWARTET +++ KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++
             </div>
         </div>
     </div>
 
-    <!-- NAVIGATION & MODI -->
-    <header class="bg-panel border-b border-white/10 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
-        <div class="flex items-center space-x-3">
-            <div id="globalEmblem" class="w-10 h-10 rounded bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-xl shadow-inner">🌐</div>
-            <div>
-                <h1 id="globalTitle" class="text-lg font-bold tracking-tight text-white uppercase">Wahl-Studio 2026</h1>
-                <p class="text-xs text-gray-400">Live Broadcast Infographic Engine</p>
-            </div>
-        </div>
-
-        <div class="flex items-center space-x-2 bg-pitch p-1 rounded-lg border border-white/10">
-            <button onclick="setMode('parliament')" id="nav-parliament" class="px-4 py-1.5 text-xs font-semibold rounded-md transition-all bg-blue-600 text-white shadow">Parlamentswahl</button>
-            <button onclick="setMode('presidency')" id="nav-presidency" class="px-4 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-400 hover:text-white">Präsidentschaft</button>
-            <button onclick="setMode('us')" id="nav-us" class="px-4 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-400 hover:text-white">US-Wahl</button>
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <button onclick="toggleEditor()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-xs font-semibold border border-white/15 transition flex items-center gap-2">
-                ⚙️ Studio Editor
-            </button>
-            <button onclick="export4K()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
-                📷 4K Export
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN DASHBOARD CONTAINER -->
-    <main id="exportArea" class="flex-1 p-6 md:p-8 flex flex-col justify-between max-w-[1600px] mx-auto w-full gap-8 bg-pitch">
+    <!-- MAIN APP WRAPPER FOR 4K EXPORT -->
+    <div id="export-area" class="flex-1 flex flex-col p-4 md:p-6 max-w-[1920px] mx-auto w-full">
         
-        <!-- HEADER METRICS (Turnout & Counted) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-cardBg border border-white/10 rounded-lg p-4 flex items-center justify-between shadow-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-blue-500/10 rounded border border-blue-500/20 text-blue-400 font-bold text-xs uppercase tracking-wider">Wahlbeteiligung</div>
+        <!-- HEADER / NAVIGATION -->
+        <header class="flex flex-wrap items-center justify-between pb-4 mb-4 border-b border-white/10 gap-4">
+            <div class="flex items-center gap-3">
+                <div id="flag-display" class="text-3xl p-1 bg-white/5 rounded border border-white/10">🌐</div>
+                <div>
+                    <h1 class="text-2xl font-bold tech-font tracking-wider text-white uppercase flex items-center gap-2">
+                        TV LIVE ELECTION STUDIO <span class="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded border border-cyan-500/30">PRO BROADCAST</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Auszählungsstand: <span id="display-progress" class="text-cyan-400 font-semibold">88.4%</span> | Wahlbeteiligung: <span id="display-turnout" class="text-gray-200">74.2%</span></p>
                 </div>
-                <div class="text-2xl font-extrabold text-white tracking-tight"><span id="metricTurnout">78.4</span>%</div>
             </div>
-            <div class="bg-cardBg border border-white/10 rounded-lg p-4 flex items-center justify-between shadow-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-emerald-500/10 rounded border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-wider">Auszählungsstand</div>
-                </div>
-                <div class="text-2xl font-extrabold text-white tracking-tight"><span id="metricCounted">94.2</span>%</div>
-            </div>
-        </div>
 
-        <!-- 1. BAR CHART SECTION -->
-        <div class="bg-cardBg border border-white/10 rounded-xl p-6 shadow-2xl flex-1 flex flex-col justify-end min-h-[460px]">
-            <div id="chartContainer" class="flex justify-around items-end h-96 gap-3 pt-8 pb-4 border-b border-white/10">
-                <!-- Dynamic Bars rendered via JS -->
+            <!-- MODE SELECTOR & CONTROLS -->
+            <div class="flex items-center gap-2" data-html2canvas-ignore="true">
+                <button onclick="setMode('parliament')" id="btn-parliament" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white">PARLAMENT</button>
+                <button onclick="setMode('presidential')" id="btn-presidential" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">PRÄSIDENT</button>
+                <button onclick="setMode('us')" id="btn-us" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">US-WAHL</button>
+                <button onclick="toggleEditor()" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-amber-600/80 hover:bg-amber-600 text-white ml-2">⚙️ EDITOR</button>
+                <button onclick="export4K()" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-emerald-600 hover:bg-emerald-500 text-white">📸 4K EXPORT</button>
             </div>
-        </div>
+        </header>
 
-        <!-- 2. PARLIAMENT SEAT DISTRIBUTION & BLOCKS (Only for Parliament mode) -->
-        <div id="parliamentSection" class="bg-cardBg border border-white/10 rounded-xl p-6 shadow-2xl flex flex-col gap-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <h3 class="text-sm font-bold tracking-wider uppercase text-gray-300">Sitzverteilung & Block-Mehrheiten</h3>
-                <div id="blockSummaryContainer" class="flex flex-wrap gap-4">
-                    <!-- Dynamic Blocks -->
+        <!-- PARLIAMENT & PRESIDENTIAL VIEW -->
+        <main id="view-standard" class="flex-1 flex flex-col justify-between gap-6">
+            
+            <!-- TOP SECTION: BAR GRAPH WITH EXPANDED IDEOLOGY SPACE -->
+            <div class="pitch-card rounded-lg p-6 relative overflow-hidden flex-1 flex flex-col justify-end min-h-[420px]">
+                
+                <!-- BARS CONTAINER -->
+                <div id="bars-container" class="grid gap-3 items-end h-[240px] w-full border-b border-white/10 pb-2">
+                    <!-- Dynamic Bars injected here -->
+                </div>
+
+                <!-- IDEOLOGY & DETAILS GRID (PERFECT ALIGNMENT, NO TRUNCATION) -->
+                <div id="ideology-container" class="grid gap-3 pt-3 min-h-[140px] text-center items-start">
+                    <!-- Dynamic Ideology Cards injected here -->
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6">
-                <div class="flex flex-col gap-2">
-                    <div class="text-xs text-gray-400 font-semibold uppercase">Absolute Mehrheit</div>
-                    <div class="text-xl font-bold text-white"><span id="majorityNeeded">61</span> Sitze</div>
+
+            <!-- MIDDLE SECTION: PARLIAMENT HALFCIRCLE & BLOCK MAJORITIES (PARLIAMENT MODE ONLY) -->
+            <div id="parliament-section" class="pitch-card rounded-lg p-6 flex flex-col items-center justify-center relative min-h-[320px]">
+                <h3 class="text-sm font-semibold tech-font text-gray-400 mb-2 uppercase tracking-widest">Sitzverteilung & Block-Mehrheiten</h3>
+                
+                <!-- DYNAMIC BLOCK MAJORITIES OVER HALFCIRCLE -->
+                <div id="block-container" class="flex gap-4 mb-4 flex-wrap justify-center w-full max-w-2xl">
+                    <!-- Dynamic Block Bars injected here -->
                 </div>
-                <div class="relative flex justify-center items-center h-64">
+
+                <!-- DONUT CHART (CUTOUT 48% FOR MASSIVE THICK LOOK) -->
+                <div class="relative w-[340px] h-[180px] flex justify-center items-center">
                     <canvas id="parliamentChart"></canvas>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-6">
-                        <span id="totalSeatsCount" class="text-3xl font-black text-white">120</span>
-                        <span class="text-xs uppercase font-semibold text-gray-400 tracking-wider">Sitze</span>
-                    </div>
-                </div>
-                <div class="flex justify-end">
-                    <div class="bg-pitch/60 border border-white/10 rounded-lg p-4 text-xs text-gray-300 space-y-1 w-full max-w-xs">
-                        <div class="font-bold text-white uppercase tracking-wider mb-2">Koalitionsrechner</div>
-                        <div id="coalitionStatus" class="font-semibold text-emerald-400">Mehrheit erreicht (67 Sitze)</div>
-                    </div>
                 </div>
             </div>
+
+            <!-- BOTTOM SECTION: COALITION CALCULATOR (PARLIAMENT MODE ONLY) -->
+            <div id="coalition-section" class="pitch-card rounded-lg p-5">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-semibold tech-font text-gray-300 uppercase tracking-wider">Koalitionsrechner</h3>
+                    <div id="coalition-status" class="text-xs font-bold tech-font px-3 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50">
+                        KEINE MEHRHEIT (0 / 200 Sitze)
+                    </div>
+                </div>
+                <div id="coalition-buttons" class="flex flex-wrap gap-2">
+                    <!-- Dynamic Coalition Toggle Buttons injected here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- US ELECTION VIEW (COMPACT STATES & 270 BAR) -->
+        <main id="view-us" class="hidden flex-1 flex-col gap-6">
+            <!-- 270 MAJORITY BAR -->
+            <div class="pitch-card rounded-lg p-6">
+                <div class="flex justify-between text-sm font-bold tech-font mb-2">
+                    <span class="text-blue-400 text-lg">DEMOKRATEN: <span id="us-dem-votes">0</span></span>
+                    <span class="text-yellow-400">270 ZUR MEHRHEIT (TOTAL 538)</span>
+                    <span class="text-red-400 text-lg">REPUBLIKANER: <span id="us-rep-votes">0</span></span>
+                </div>
+                <div class="w-full bg-gray-800 h-8 rounded overflow-hidden flex relative border border-white/20">
+                    <div id="us-bar-dem" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="us-bar-neutral" class="bg-gray-600 h-full transition-all duration-300" style="width: 100%"></div>
+                    <div id="us-bar-other" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="us-bar-rep" class="bg-red-600 h-full transition-all duration-300" style="width: 0%"></div>
+                    <!-- 270 MARKER -->
+                    <div class="absolute left-[50%] top-0 bottom-0 w-0.5 bg-yellow-400 z-10 shadow-[0_0_10px_#facc15]"></div>
+                </div>
+            </div>
+
+            <!-- COMPACT US STATES GRID -->
+            <div class="pitch-card rounded-lg p-4 flex-1">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-semibold tech-font text-gray-400">STAATEN-ZUWEISUNG (⭐ = SWING STATE MARKIERUNG)</span>
+                    <button onclick="resetUSStates()" class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300">Alle Zurücksetzen (Grau)</button>
+                </div>
+                <div id="us-states-grid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-11 gap-2">
+                    <!-- Dynamic Compact US States injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- DRAWER EDITOR PANEL -->
+    <div id="editor-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-panel border-l border-white/10 p-6 overflow-y-auto shadow-2xl z-50 transform translate-x-full transition-transform duration-300" data-html2canvas-ignore="true">
+        <div class="flex justify-between items-center pb-4 border-b border-white/10 mb-4">
+            <h2 class="text-lg font-bold tech-font text-white">STUDIO EDITOR</h2>
+            <button onclick="toggleEditor()" class="text-gray-400 hover:text-white text-xl">✕</button>
         </div>
 
-        <!-- 3. US ELECTION STATES CONTAINER (Only for US mode) -->
-        <div id="usSection" class="hidden bg-cardBg border border-white/10 rounded-xl p-6 shadow-2xl flex flex-col gap-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg font-bold text-white uppercase tracking-wide">US Electoral College (270 to win)</h3>
-                    <p class="text-xs text-gray-400">Klicke auf die Staaten oder nutze die Buttons zum Zuweisen. ⭐ = Swing State</p>
-                </div>
-                <div class="flex gap-6 text-sm font-bold">
-                    <div class="text-blue-400">Demokraten: <span id="usDemSum">0</span></div>
-                    <div class="text-red-400">Republikaner: <span id="usGopSum">0</span></div>
-                    <div class="text-gray-400">Offen: <span id="usNeutralSum">538</span></div>
-                </div>
-            </div>
-            <div class="w-full bg-pitch h-4 rounded-full overflow-hidden flex border border-white/10">
-                <div id="usBarDem" class="bg-blue-600 transition-all duration-300" style="width: 0%"></div>
-                <div id="usBarNeutral" class="bg-gray-700 transition-all duration-300" style="width: 100%"></div>
-                <div id="usBarGop" class="bg-red-600 transition-all duration-300" style="width: 0%"></div>
-            </div>
-            <div id="usStatesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-[360px] overflow-y-auto pr-2">
-                <!-- Rendered via JS -->
-            </div>
-        </div>
-
-    </main>
-
-    <!-- STUDIO EDITOR MODAL -->
-    <div id="editorModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-panel border border-white/15 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-cardBg">
-                <h2 class="font-bold text-white text-sm uppercase tracking-wider">Studio Editor & Datenverwaltung</h2>
-                <button onclick="toggleEditor()" class="text-gray-400 hover:text-white text-xl font-bold">&times;</button>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1 space-y-6">
-                <!-- Global Settings -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-pitch p-4 rounded-xl border border-white/10">
+        <div class="space-y-6">
+            <!-- GENERAL METADATA -->
+            <div>
+                <h3 class="text-xs font-bold tech-font text-cyan-400 uppercase mb-2">Globale Daten</h3>
+                <div class="space-y-2">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase">Wahl-Titel</label>
-                        <input type="text" id="editGlobalTitle" class="w-full bg-cardBg border border-white/20 rounded px-3 py-2 text-sm text-white" value="Wahl-Studio 2026">
+                        <label class="text-xs text-gray-400">Flagge / Emblem Icon</label>
+                        <input type="text" id="edit-flag" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onchange="updateMeta()">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase">Wahlbeteiligung (%)</label>
-                        <input type="text" id="editTurnout" class="w-full bg-cardBg border border-white/20 rounded px-3 py-2 text-sm text-white" value="78.4">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase">Auszählung (%)</label>
-                        <input type="text" id="editCounted" class="w-full bg-cardBg border border-white/20 rounded px-3 py-2 text-sm text-white" value="94.2">
-                    </div>
-                </div>
-
-                <!-- Parties / Candidates Editor -->
-                <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider">Parteien / Kandidaten & Blöcke</h3>
-                        <button onclick="addParty()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-semibold transition">+ Eintrag hinzufügen</button>
-                    </div>
-                    <div id="editorPartiesList" class="space-y-3">
-                        <!-- Rendered via JS -->
-                    </div>
-                </div>
-
-                <!-- Breaking News Editor -->
-                <div>
-                    <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-3">Breaking News Ticker (Max 4)</h3>
-                    <div id="editorTickerList" class="space-y-2">
-                        <!-- Rendered via JS -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs text-gray-400">Auszählungsstand</label>
+                            <input type="text" id="edit-progress" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onchange="updateMeta()">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400">Wahlbeteiligung</label>
+                            <input type="text" id="edit-turnout" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onchange="updateMeta()">
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="px-6 py-4 border-t border-white/10 bg-cardBg flex justify-end gap-3">
-                <button onclick="toggleEditor()" class="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-lg text-xs font-semibold">Abbrechen</button>
-                <button onclick="saveEditor()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-lg">Änderungen übernehmen</button>
+
+            <!-- BREAKING NEWS TICKER EDITOR -->
+            <div>
+                <h3 class="text-xs font-bold tech-font text-red-400 uppercase mb-2">Eilmeldungen (Ticker)</h3>
+                <textarea id="edit-ticker" rows="3" class="w-full bg-black/50 border border-white/10 p-2 text-xs rounded text-white" onchange="updateTicker()"></textarea>
+            </div>
+
+            <!-- PARTIES / CANDIDATES EDITOR -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xs font-bold tech-font text-cyan-400 uppercase">Parteien / Kandidaten</h3>
+                    <button onclick="addParty()" class="text-xs bg-cyan-600 hover:bg-cyan-500 text-white px-2 py-1 rounded">+ Hinzufügen</button>
+                </div>
+                <div id="editor-parties" class="space-y-3">
+                    <!-- Dynamic Party Editor Forms -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- LOGIC & SCRIPTS -->
     <script>
+        // APP STATE
         let currentMode = 'parliament';
+        let chartInstance = null;
 
-        let appData = {
-            title: "Wahl-Studio 2026",
-            turnout: "78.4",
-            counted: "94.2",
-            ticker: [
-                "2026 Wahl-Sondersendung live im Studio",
-                "Hochrechnungen zeigen spannendes Kopf-an-Kopf-Rennen",
-                "Koalitionsverhandlungen zeichnen sich in ersten Trendanalysen ab",
-                "Bleiben Sie dran für die neuesten Resultate und Live-Analysen"
-            ],
-            parties: [
-                { name: "GERB-SDS", percent: 26.4, delta: "+1.2", seats: 36, color: "#2563eb", badge: "GERB", ideol: "National Conservatism\nZionism\nRight-Wing", block: "Netanyahu Bloc", photo: "" },
-                { name: "PP-DB", percent: 14.2, delta: "-2.5", seats: 20, color: "#06b6d4", badge: "PP-DB", ideol: "Liberal Zionism\nCentre-Right\nPro-European", block: "Opposition Bloc", photo: "" },
-                { name: "Vazrazhdane", percent: 13.3, delta: "+0.8", seats: 18, color: "#311052", badge: "VAZRAZHDANE", ideol: "Nationalism\nRight-Wing Populism\nFar-Right", block: "Opposition Bloc", photo: "" },
-                { name: "DPS-NN", percent: 11.5, delta: "+0.5", seats: 18, color: "#0d9488", badge: "DPS", ideol: "Israeli Arab Interests\nLiberalism\nLeft-Wing", block: "Opposition Bloc", photo: "" },
-                { name: "BSP-OL", percent: 7.5, delta: "-0.9", seats: 10, color: "#1d4ed8", badge: "BSP", ideol: "Social Democracy\nCentre-Left\nPro-Labor", block: "Opposition Bloc", photo: "" },
-                { name: "APS", percent: 7.4, delta: "+7.4", seats: 10, color: "#5b21b6", badge: "APS", ideol: "Ashkenazi Haredi Int.\nReligious Cons.\nSocial Conserv.", block: "Netanyahu Bloc", photo: "" },
-                { name: "ITN", percent: 6.8, delta: "-0.3", seats: 8, color: "#0284c7", badge: "ITN", ideol: "Conservatism\nDirect Democracy\nRight-Wing", block: "Opposition Bloc", photo: "" }
-            ],
-            usStates: [
-                { name: "California", ev: 54, status: "neutral", swing: false },
-                { name: "Texas", ev: 40, status: "neutral", swing: false },
-                { name: "Florida", ev: 30, status: "neutral", swing: true },
-                { name: "New York", ev: 28, status: "neutral", swing: false },
-                { name: "Illinois", ev: 19, status: "neutral", swing: false },
-                { name: "Pennsylvania", ev: 19, status: "neutral", swing: true },
-                { name: "Ohio", ev: 17, status: "neutral", swing: false },
-                { name: "Georgia", ev: 16, status: "neutral", swing: true },
-                { name: "North Carolina", ev: 16, status: "neutral", swing: true },
-                { name: "Michigan", ev: 15, status: "neutral", swing: true },
-                { name: "Arizona", ev: 11, status: "neutral", swing: true },
-                { name: "Wisconsin", ev: 10, status: "neutral", swing: true },
-                { name: "Nevada", ev: 6, status: "neutral", swing: true }
-            ]
+        let meta = {
+            flag: '🌐',
+            progress: '88.4%',
+            turnout: '74.2%',
+            ticker: '+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++ WAHLBETEILIGUNG AUF REKORDNIVEAU +++ ERSTE HOCHRECHNUNGEN ERWARTET +++ KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++'
         };
 
-        let parliamentChartInstance = null;
+        let parties = [
+            { id: 1, name: 'GERB-SDS', short: 'GERB', seats: 36, pct: 26.4, diff: '+1.2%', color: '#2563eb', img: '', ideology: 'National Conservatism\nZionism\nRight-Wing', coalition: false },
+            { id: 2, name: 'PP-DB', short: 'PP-DB', seats: 20, pct: 14.2, diff: '-2.5%', color: '#06b6d4', img: '', ideology: 'Liberal Zionism\nCentre-Right\nPro-European', coalition: false },
+            { id: 3, name: 'Wusraschdane', short: 'VAZRAZHDANE', seats: 18, pct: 13.3, diff: '+0.8%', color: '#1e1b4b', img: '', ideology: 'Nationalism\nRight-Wing Populism\nFar-Right', coalition: false },
+            { id: 4, name: 'DPS-NN', short: 'DPS', seats: 18, pct: 11.5, diff: '+0.5%', color: '#0d9488', img: '', ideology: 'Israeli Arab Interests\nLiberalism\nLeft-Wing', coalition: false },
+            { id: 5, name: 'BSP-OL', short: 'BSP', seats: 12, pct: 7.5, diff: '-0.9%', color: '#1d4ed8', img: '', ideology: 'Social Democracy\nCentre-Left\nPro-Labor', coalition: false },
+            { id: 6, name: 'APS', short: 'APS', seats: 12, pct: 7.4, diff: '+7.4%', color: '#312e81', img: '', ideology: 'Ashkenazi Haredi Interests\nReligious Conservatism\nSocial Conservatism', coalition: false },
+            { id: 7, name: 'ITN', short: 'ITN', seats: 11, pct: 6.8, diff: '-0.3%', color: '#0284c7', img: '', ideology: 'Conservatism\nDirect Democracy\nRight-Wing', coalition: false }
+        ];
+
+        let usStates = [
+            { code: 'AL', votes: 9, status: 'neutral', swing: false }, { code: 'AK', votes: 3, status: 'neutral', swing: false },
+            { code: 'AZ', votes: 11, status: 'neutral', swing: true }, { code: 'AR', votes: 6, status: 'neutral', swing: false },
+            { code: 'CA', votes: 54, status: 'neutral', swing: false }, { code: 'CO', votes: 10, status: 'neutral', swing: false },
+            { code: 'CT', votes: 7, status: 'neutral', swing: false }, { code: 'DE', votes: 3, status: 'neutral', swing: false },
+            { code: 'FL', votes: 30, status: 'neutral', swing: false }, { code: 'GA', votes: 16, status: 'neutral', swing: true },
+            { code: 'HI', votes: 4, status: 'neutral', swing: false }, { code: 'ID', votes: 4, status: 'neutral', swing: false },
+            { code: 'IL', votes: 19, status: 'neutral', swing: false }, { code: 'IN', votes: 11, status: 'neutral', swing: false },
+            { code: 'IA', votes: 6, status: 'neutral', swing: false }, { code: 'KS', votes: 6, status: 'neutral', swing: false },
+            { code: 'KY', votes: 8, status: 'neutral', swing: false }, { code: 'LA', votes: 8, status: 'neutral', swing: false },
+            { code: 'ME', votes: 4, status: 'neutral', swing: false }, { code: 'MD', votes: 10, status: 'neutral', swing: false },
+            { code: 'MA', votes: 11, status: 'neutral', swing: false }, { code: 'MI', votes: 15, status: 'neutral', swing: true },
+            { code: 'MN', votes: 10, status: 'neutral', swing: false }, { code: 'MS', votes: 6, status: 'neutral', swing: false },
+            { code: 'MO', votes: 10, status: 'neutral', swing: false }, { code: 'MT', votes: 4, status: 'neutral', swing: false },
+            { code: 'NE', votes: 5, status: 'neutral', swing: false }, { code: 'NV', votes: 6, status: 'neutral', swing: true },
+            { code: 'NH', votes: 4, status: 'neutral', swing: false }, { code: 'NJ', votes: 14, status: 'neutral', swing: false },
+            { code: 'NM', votes: 5, status: 'neutral', swing: false }, { code: 'NY', votes: 28, status: 'neutral', swing: false },
+            { code: 'NC', votes: 16, status: 'neutral', swing: true }, { code: 'ND', votes: 3, status: 'neutral', swing: false },
+            { code: 'OH', votes: 17, status: 'neutral', swing: false }, { code: 'OK', votes: 7, status: 'neutral', swing: false },
+            { code: 'OR', votes: 8, status: 'neutral', swing: false }, { code: 'PA', votes: 19, status: 'neutral', swing: true },
+            { code: 'RI', votes: 4, status: 'neutral', swing: false }, { code: 'SC', votes: 9, status: 'neutral', swing: false },
+            { code: 'SD', votes: 3, status: 'neutral', swing: false }, { code: 'TN', votes: 11, status: 'neutral', swing: false },
+            { code: 'TX', votes: 40, status: 'neutral', swing: false }, { code: 'UT', votes: 6, status: 'neutral', swing: false },
+            { code: 'VT', votes: 3, status: 'neutral', swing: false }, { code: 'VA', votes: 13, status: 'neutral', swing: false },
+            { code: 'WA', votes: 12, status: 'neutral', swing: false }, { code: 'WV', votes: 4, status: 'neutral', swing: false },
+            { code: 'WI', votes: 10, status: 'neutral', swing: true }, { code: 'WY', votes: 3, status: 'neutral', swing: false },
+            { code: 'DC', votes: 3, status: 'neutral', swing: false }
+        ];
+
+        // INIT
+        window.onload = () => {
+            renderAll();
+            document.getElementById('edit-flag').value = meta.flag;
+            document.getElementById('edit-progress').value = meta.progress;
+            document.getElementById('edit-turnout').value = meta.turnout;
+            document.getElementById('edit-ticker').value = meta.ticker;
+        };
 
         function setMode(mode) {
             currentMode = mode;
-            ['parliament', 'presidency', 'us'].forEach(m => {
-                const btn = document.getElementById(`nav-${m}`);
-                if(m === mode) {
-                    btn.className = "px-4 py-1.5 text-xs font-semibold rounded-md transition-all bg-blue-600 text-white shadow";
-                } else {
-                    btn.className = "px-4 py-1.5 text-xs font-semibold rounded-md transition-all text-gray-400 hover:text-white";
-                }
-            });
+            document.getElementById('btn-parliament').className = mode === 'parliament' ? 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white' : 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
+            document.getElementById('btn-presidential').className = mode === 'presidential' ? 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white' : 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
+            document.getElementById('btn-us').className = mode === 'us' ? 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white' : 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
 
-            document.getElementById('parliamentSection').classList.toggle('hidden', mode !== 'parliament');
-            document.getElementById('usSection').classList.toggle('hidden', mode !== 'us');
-            renderApp();
-        }
+            if (mode === 'us') {
+                document.getElementById('view-standard').classList.add('hidden');
+                document.getElementById('view-us').classList.remove('hidden');
+                document.getElementById('view-us').classList.add('flex');
+            } else {
+                document.getElementById('view-us').classList.add('hidden');
+                document.getElementById('view-us').classList.remove('flex');
+                document.getElementById('view-standard').classList.remove('hidden');
 
-        function renderApp() {
-            document.getElementById('globalTitle').innerText = appData.title;
-            document.getElementById('metricTurnout').innerText = appData.turnout;
-            document.getElementById('metricCounted').innerText = appData.counted;
-
-            // Render Ticker
-            const tickerEl = document.getElementById('tickerContent');
-            tickerEl.innerHTML = appData.ticker.map(t => `<span class="mx-8">• ${t}</span>`).join('');
-
-            // Render Bar Chart
-            const chartContainer = document.getElementById('chartContainer');
-            chartContainer.innerHTML = '';
-            
-            const maxPercent = Math.max(...appData.parties.map(p => p.percent), 30);
-
-            appData.parties.forEach((p, idx) => {
-                const heightPercent = Math.max(15, (p.percent / maxPercent) * 100);
-                const col = document.createElement('div');
-                col.className = "flex flex-col items-center h-full justify-end flex-1 min-w-[70px] max-w-[96px] group";
-                
-                let photoHtml = p.photo ? `<img src="${p.photo}" class="w-10 h-10 rounded-full object-cover border border-white/20 mb-1.5 shadow" />` : '';
-                let seatsHtml = currentMode === 'parliament' ? `<div class="text-xs font-bold text-gray-300 mb-1">${p.seats} <span class="font-normal text-[10px] text-gray-400">Sitze</span></div>` : '';
-                let deltaHtml = p.delta ? `<div class="text-[11px] font-semibold ${p.delta.startsWith('+') ? 'text-emerald-400' : 'text-red-400'} mb-2">${p.delta}%</div>` : '';
-
-                col.innerHTML = `
-                    ${seatsHtml}
-                    <div class="text-xs font-bold text-white mb-2">${p.percent}%</div>
-                    <div class="w-full rounded-t-sm transition-all duration-300 relative shadow-lg" style="height: ${heightPercent}%; background-color: ${p.color}; box-shadow: 0 0 15px ${p.color}40;"></div>
-                    ${deltaHtml}
-                    ${photoHtml}
-                    <div class="text-xs font-bold text-white text-center truncate w-full mt-1">${p.name}</div>
-                    <div class="mt-1"><span class="px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase" style="background-color: ${p.color};">${p.badge}</span></div>
-                    <div class="mt-2 text-[10px] text-gray-400 text-center leading-tight whitespace-pre-line min-h-[90px]">${p.ideol || ''}</div>
-                `;
-                chartContainer.appendChild(col);
-            });
-
-            if(currentMode === 'parliament') {
-                renderParliament();
-            } else if(currentMode === 'us') {
-                renderUSStates();
+                document.getElementById('parliament-section').style.display = mode === 'parliament' ? 'flex' : 'none';
+                document.getElementById('coalition-section').style.display = mode === 'parliament' ? 'block' : 'none';
             }
+            renderAll();
         }
 
-        function renderParliament() {
-            const totalSeats = appData.parties.reduce((acc, p) => acc + (parseInt(p.seats) || 0), 0);
-            document.getElementById('totalSeatsCount').innerText = totalSeats;
-            const majority = Math.floor(totalSeats / 2) + 1;
-            document.getElementById('majorityNeeded').innerText = majority;
+        function renderAll() {
+            renderBarsAndIdeology();
+            if (currentMode === 'parliament') {
+                renderParliamentChart();
+                renderCoalitionButtons();
+                renderBlocks();
+            } else if (currentMode === 'us') {
+                renderUSGrid();
+            }
+            renderPartyEditor();
+        }
 
-            // Block Calculation with Dynamic Strongest Party Color
-            const blocks = {};
-            appData.parties.forEach(p => {
-                const bName = p.block || "Unabhängig";
-                if(!blocks[bName]) blocks[bName] = { seats: 0, parties: [] };
-                blocks[bName].seats += (parseInt(p.seats) || 0);
-                blocks[bName].parties.push(p);
-            });
+        // RENDER BARS & IDEOLOGY (SYNCHRONOUS GRID, MAX EXPANDED HEIGHT)
+        function renderBarsAndIdeology() {
+            const barsContainer = document.getElementById('bars-container');
+            const ideologyContainer = document.getElementById('ideology-container');
+            
+            barsContainer.style.gridTemplateColumns = `repeat(${parties.length}, minmax(0, 1fr))`;
+            ideologyContainer.style.gridTemplateColumns = `repeat(${parties.length}, minmax(0, 1fr))`;
 
-            const blockSummary = document.getElementById('blockSummaryContainer');
-            blockSummary.innerHTML = '';
-            let coalitionSeats = 0;
+            barsContainer.innerHTML = '';
+            ideologyContainer.innerHTML = '';
 
-            Object.keys(blocks).forEach(bName => {
-                const bData = blocks[bName];
-                // Find strongest party in this block
-                let strongestColor = "#3b82f6";
-                if(bData.parties.length > 0) {
-                    const strongest = bData.parties.reduce((prev, curr) => (curr.seats > prev.seats) ? curr : prev);
-                    strongestColor = strongest.color;
-                }
+            const maxPct = Math.max(...parties.map(p => p.pct), 1);
 
-                if(bName.toLowerCase().includes('netanyahu') || bName.toLowerCase().includes('regierung')) {
-                    coalitionSeats = bData.seats;
-                }
+            parties.forEach(p => {
+                const heightPct = Math.max((p.pct / maxPct) * 100, 15);
 
-                const blockEl = document.createElement('div');
-                blockEl.className = "flex items-center gap-3 bg-pitch/80 border border-white/10 px-4 py-2 rounded-lg";
-                blockEl.innerHTML = `
-                    <div class="w-3 h-3 rounded-full shadow" style="background-color: ${strongestColor}; box-shadow: 0 0 10px ${strongestColor};"></div>
-                    <div>
-                        <div class="text-[11px] font-semibold text-gray-400">${bName}</div>
-                        <div class="text-sm font-bold text-white">${bData.seats} Sitze</div>
+                // BAR ITEM
+                const barItem = document.createElement('div');
+                barItem.className = 'flex flex-col items-center justify-end h-full w-full';
+                barItem.innerHTML = `
+                    ${currentMode === 'parliament' ? `<div class="text-xs font-bold tech-font text-gray-300 mb-1">${p.seats} <span class="text-[10px] text-gray-500 font-normal">Sitze</span></div>` : ''}
+                    <div class="w-full max-w-[76px] flex flex-col justify-between p-2 text-center text-white font-bold text-sm tech-font rounded-t-sm shadow-lg transition-all duration-300" 
+                         style="height: ${heightPct}%; background-color: ${p.color};">
+                        <span>${p.pct}%</span>
                     </div>
                 `;
-                blockSummary.appendChild(blockEl);
-            });
+                barsContainer.appendChild(barItem);
 
-            const coalStatus = document.getElementById('coalitionStatus');
-            if(coalitionSeats >= majority) {
-                coalStatus.className = "font-semibold text-emerald-400";
-                coalStatus.innerText = `Mehrheit erreicht (${coalitionSeats} Sitze)`;
-            } else {
-                coalStatus.className = "font-semibold text-amber-400";
-                coalStatus.innerText = `Keine Mehrheit (${coalitionSeats}/${majority} Sitze)`;
+                // IDEOLOGY / DETAIL ITEM
+                const isDiffPos = p.diff.startsWith('+');
+                const diffColor = isDiffPos ? 'text-emerald-400' : 'text-red-400';
+
+                const ideologyItem = document.createElement('div');
+                ideologyItem.className = 'flex flex-col items-center gap-1.5 w-full';
+                ideologyItem.innerHTML = `
+                    <div class="text-xs font-semibold ${diffColor} tech-font">${p.diff}</div>
+                    ${p.img ? `<img src="${p.img}" class="w-9 h-9 rounded-full object-cover border border-white/20 shadow">` : ''}
+                    <div class="font-bold text-xs text-white tech-font tracking-wide break-words w-full">${p.name}</div>
+                    <div class="text-[10px] font-bold px-2 py-0.5 rounded text-white shadow-sm break-words max-w-full" style="background-color: ${p.color}">${p.short}</div>
+                    <div class="text-[11px] text-gray-400 leading-snug break-words whitespace-normal w-full mt-1 font-medium">
+                        ${p.ideology.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                ideologyContainer.appendChild(ideologyItem);
+            });
+        }
+
+        // PARLIAMENT DONUT (CUTOUT 48% FOR MASSIVE LOOK)
+        function renderParliamentChart() {
+            const ctx = document.getElementById('parliamentChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
             }
 
-            // Render Chart.js Semicircle (cutout 48%)
-            const ctx = document.getElementById('parliamentChart').getContext('2d');
-            if(parliamentChartInstance) parliamentChartInstance.destroy();
+            const dataSeats = parties.map(p => p.seats);
+            const colors = parties.map(p => p.color);
 
-            parliamentChartInstance = new Chart(ctx, {
+            chartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: appData.parties.map(p => p.name),
                     datasets: [{
-                        data: appData.parties.map(p => p.seats),
-                        backgroundColor: appData.parties.map(p => p.color),
+                        data: dataSeats,
+                        backgroundColor: colors,
                         borderWidth: 0,
-                        circumference: 180,
-                        rotation: 270
                     }]
                 },
                 options: {
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '48%', // MASSIVE THICK HALFCIRCLE
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '48%',
                     plugins: { legend: { display: false }, tooltip: { enabled: true } }
                 }
             });
         }
 
-        function renderUSStates() {
-            const grid = document.getElementById('usStatesGrid');
-            grid.innerHTML = '';
+        // DYNAMIC BLOCKS OVER HALFCIRCLE WITH COLOR OF STRONGEST PARTY IN BLOCK
+        function renderBlocks() {
+            const container = document.getElementById('block-container');
+            container.innerHTML = '';
+
+            // Group 1: Government/Coalition Selected Parties
+            const coalitionParties = parties.filter(p => p.coalition);
+            const totalSeats = parties.reduce((a, b) => a + b.seats, 0);
             
-            let demSum = 0, gopSum = 0, neutralSum = 0;
+            if (coalitionParties.length > 0) {
+                const coalitionSeats = coalitionParties.reduce((a, b) => a + b.seats, 0);
+                const strongest = [...coalitionParties].sort((a,b) => b.seats - a.seats)[0];
+                
+                const block1 = document.createElement('div');
+                block1.className = 'px-4 py-2 rounded text-white font-bold text-xs tech-font flex items-center gap-2 border border-white/10 shadow-lg';
+                block1.style.backgroundColor = strongest.color;
+                block1.innerHTML = `<span>GEWÄHLTE KOALITION: ${coalitionSeats} SITZE</span>`;
+                container.appendChild(block1);
+            }
 
-            appData.usStates.forEach((st, idx) => {
-                if(st.status === 'dem') demSum += st.ev;
-                else if(st.status === 'gop') gopSum += st.ev;
-                else neutralSum += st.ev;
-
-                let bgClass = "bg-pitch/60 border-white/10 text-gray-300";
-                if(st.status === 'dem') bgClass = "bg-blue-600/30 border-blue-500 text-blue-300";
-                else if(st.status === 'gop') bgClass = "bg-red-600/30 border-red-500 text-red-300";
-                else if(st.status === 'green') bgClass = "bg-emerald-600/30 border-emerald-500 text-emerald-300";
-
-                const swingBorder = st.swing ? "border-2 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.4)]" : "border";
-
-                const card = document.createElement('div');
-                card.className = `p-3 rounded-lg flex flex-col justify-between cursor-pointer transition-all ${bgClass} ${swingBorder}`;
-                card.onclick = () => cycleUSState(idx);
-                card.innerHTML = `
-                    <div class="flex justify-between items-center text-xs font-bold">
-                        <span>${st.name}</span>
-                        <span onclick="event.stopPropagation(); toggleSwing(${idx})" class="text-amber-400 hover:scale-125 transition">⭐</span>
-                    </div>
-                    <div class="flex justify-between items-end mt-2">
-                        <span class="text-[10px] uppercase text-gray-400">${st.status}</span>
-                        <span class="text-sm font-extrabold text-white">${st.ev} EV</span>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-
-            document.getElementById('usDemSum').innerText = demSum;
-            document.getElementById('usGopSum').innerText = gopSum;
-            document.getElementById('usNeutralSum').innerText = neutralSum;
-
-            document.getElementById('usBarDem').style.width = (demSum / 538 * 100) + '%';
-            document.getElementById('usBarNeutral').style.width = (neutralSum / 538 * 100) + '%';
-            document.getElementById('usBarGop').style.width = (gopSum / 538 * 100) + '%';
-        }
-
-        function cycleUSState(idx) {
-            const states = ['neutral', 'dem', 'gop', 'green'];
-            let current = appData.usStates[idx].status;
-            let nextIdx = (states.indexOf(current) + 1) % states.length;
-            appData.usStates[idx].status = states[nextIdx];
-            renderUSStates();
-        }
-
-        function toggleSwing(idx) {
-            appData.usStates[idx].swing = !appData.usStates[idx].swing;
-            renderUSStates();
-        }
-
-        function toggleEditor() {
-            const modal = document.getElementById('editorModal');
-            modal.classList.toggle('hidden');
-            if(!modal.classList.contains('hidden')) {
-                populateEditor();
+            // Strongest Single Party Block
+            const topParty = [...parties].sort((a,b) => b.seats - a.seats)[0];
+            if (topParty) {
+                const block2 = document.createElement('div');
+                block2.className = 'px-4 py-2 rounded text-white font-bold text-xs tech-font flex items-center gap-2 border border-white/10 shadow-lg';
+                block2.style.backgroundColor = topParty.color;
+                block2.innerHTML = `<span>STÄRKSTE KRAFT (${topParty.short}): ${topParty.seats} SITZE</span>`;
+                container.appendChild(block2);
             }
         }
 
-        function populateEditor() {
-            document.getElementById('editGlobalTitle').value = appData.title;
-            document.getElementById('editTurnout').value = appData.turnout;
-            document.getElementById('editCounted').value = appData.counted;
+        // COALITION CALCULATOR
+        function renderCoalitionButtons() {
+            const container = document.getElementById('coalition-buttons');
+            container.innerHTML = '';
 
-            const list = document.getElementById('editorPartiesList');
-            list.innerHTML = '';
-            appData.parties.forEach((p, idx) => {
+            let totalSelectedSeats = 0;
+            const maxSeats = parties.reduce((a, b) => a + b.seats, 0);
+            const majorityThreshold = Math.floor(maxSeats / 2) + 1;
+
+            parties.forEach(p => {
+                if (p.coalition) totalSelectedSeats += p.seats;
+
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    p.coalition = !p.coalition;
+                    renderAll();
+                };
+                btn.className = `px-3 py-1.5 rounded text-xs font-bold tech-font transition-all border ${p.coalition ? 'border-cyan-400 ring-2 ring-cyan-400/50' : 'border-white/10 opacity-60'}`;
+                btn.style.backgroundColor = p.color;
+                btn.style.color = '#ffffff';
+                btn.innerText = `${p.short} (${p.seats})`;
+                container.appendChild(btn);
+            });
+
+            const statusEl = document.getElementById('coalition-status');
+            if (totalSelectedSeats >= majorityThreshold) {
+                statusEl.className = 'text-xs font-bold tech-font px-3 py-1 rounded bg-emerald-900/50 text-emerald-300 border border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]';
+                statusEl.innerText = ` absolute MEHRHEIT ERREICHT (${totalSelectedSeats} / ${majorityThreshold} Sitze)`;
+            } else {
+                statusEl.className = 'text-xs font-bold tech-font px-3 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50';
+                statusEl.innerText = `KEINE MEHRHEIT (${totalSelectedSeats} / ${majorityThreshold} Sitze)`;
+            }
+        }
+
+        // US ELECTION GRID & LOGIC
+        function renderUSGrid() {
+            const grid = document.getElementById('us-states-grid');
+            grid.innerHTML = '';
+
+            let demTotal = 0, repTotal = 0, otherTotal = 0, neutralTotal = 0;
+
+            usStates.forEach(s => {
+                if (s.status === 'dem') demTotal += s.votes;
+                else if (s.status === 'rep') repTotal += s.votes;
+                else if (s.status === 'other') otherTotal += s.votes;
+                else neutralTotal += s.votes;
+
+                const card = document.createElement('div');
+                let bgColor = 'bg-gray-800/80 text-gray-400 border-white/10';
+                if (s.status === 'dem') bgColor = 'bg-blue-600 text-white border-blue-400';
+                if (s.status === 'rep') bgColor = 'bg-red-600 text-white border-red-400';
+                if (s.status === 'other') bgColor = 'bg-emerald-600 text-white border-emerald-400';
+
+                // GOLDEN BORDER FOR SWING STATES
+                const borderStyle = s.swing ? 'border-2 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'border';
+
+                card.className = `p-2 rounded flex flex-col items-center justify-between cursor-pointer select-none transition-all ${bgColor} ${borderStyle}`;
+                card.innerHTML = `
+                    <div class="flex justify-between w-full text-[10px]">
+                        <span class="font-bold">${s.code}</span>
+                        <button onclick="toggleSwing('${s.code}', event)" class="hover:scale-125">${s.swing ? '⭐' : '☆'}</button>
+                    </div>
+                    <div class="text-sm font-black tech-font my-0.5">${s.votes}</div>
+                    <div class="flex gap-1 mt-1 w-full" onclick="event.stopPropagation()">
+                        <button onclick="setUSStatus('${s.code}', 'dem')" class="flex-1 text-[8px] bg-blue-700 hover:bg-blue-500 rounded py-0.5">D</button>
+                        <button onclick="setUSStatus('${s.code}', 'neutral')" class="flex-1 text-[8px] bg-gray-600 hover:bg-gray-500 rounded py-0.5">N</button>
+                        <button onclick="setUSStatus('${s.code}', 'rep')" class="flex-1 text-[8px] bg-red-700 hover:bg-red-500 rounded py-0.5">R</button>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    const cycle = { 'neutral': 'dem', 'dem': 'rep', 'rep': 'other', 'other': 'neutral' };
+                    s.status = cycle[s.status];
+                    renderUSGrid();
+                };
+
+                grid.appendChild(card);
+            });
+
+            // UPDATE BARS
+            document.getElementById('us-dem-votes').innerText = demTotal;
+            document.getElementById('us-rep-votes').innerText = repTotal;
+
+            const total = 538;
+            document.getElementById('us-bar-dem').style.width = `${(demTotal / total) * 100}%`;
+            document.getElementById('us-bar-rep').style.width = `${(repTotal / total) * 100}%`;
+            document.getElementById('us-bar-other').style.width = `${(otherTotal / total) * 100}%`;
+            document.getElementById('us-bar-neutral').style.width = `${(neutralTotal / total) * 100}%`;
+        }
+
+        function setUSStatus(code, status) {
+            const s = usStates.find(x => x.code === code);
+            if (s) { s.status = status; renderUSGrid(); }
+        }
+
+        function toggleSwing(code, e) {
+            e.stopPropagation();
+            const s = usStates.find(x => x.code === code);
+            if (s) { s.swing = !s.swing; renderUSGrid(); }
+        }
+
+        function resetUSStates() {
+            usStates.forEach(s => s.status = 'neutral');
+            renderUSGrid();
+        }
+
+        // EDITOR DRAWER LOGIC
+        function toggleEditor() {
+            const panel = document.getElementById('editor-panel');
+            panel.classList.toggle('translate-x-full');
+        }
+
+        function updateMeta() {
+            meta.flag = document.getElementById('edit-flag').value;
+            meta.progress = document.getElementById('edit-progress').value;
+            meta.turnout = document.getElementById('edit-turnout').value;
+
+            document.getElementById('flag-display').innerText = meta.flag || '🌐';
+            document.getElementById('display-progress').innerText = meta.progress;
+            document.getElementById('display-turnout').innerText = meta.turnout;
+        }
+
+        function updateTicker() {
+            meta.ticker = document.getElementById('edit-ticker').value;
+            document.getElementById('ticker-text').innerText = meta.ticker;
+        }
+
+        function renderPartyEditor() {
+            const container = document.getElementById('editor-parties');
+            container.innerHTML = '';
+
+            parties.forEach((p, index) => {
                 const item = document.createElement('div');
-                item.className = "bg-pitch p-3 rounded-lg border border-white/10 space-y-3";
+                item.className = 'p-3 bg-black/40 border border-white/10 rounded space-y-2';
                 item.innerHTML = `
-                    <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
-                        <input type="text" value="${p.name}" onchange="appData.parties[${idx}].name = this.value" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Name">
-                        <input type="number" value="${p.percent}" onchange="appData.parties[${idx}].percent = parseFloat(this.value)" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="%">
-                        <input type="number" value="${p.seats}" onchange="appData.parties[${idx}].seats = parseInt(this.value)" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Sitze">
-                        <input type="text" value="${p.delta || ''}" onchange="appData.parties[${idx}].delta = this.value" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="+/- %">
-                        <input type="color" value="${p.color}" onchange="appData.parties[${idx}].color = this.value" class="w-full h-8 bg-cardBg border border-white/20 rounded cursor-pointer">
-                        <button onclick="removeParty(${idx})" class="bg-red-600/30 text-red-400 hover:bg-red-600 hover:text-white rounded text-xs font-semibold transition">Löschen</button>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-white tech-font">Partei #${index + 1}</span>
+                        <button onclick="removeParty(${p.id})" class="text-xs text-red-400 hover:text-red-300">Löschen</button>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <input type="text" value="${p.badge}" onchange="appData.parties[${idx}].badge = this.value" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Badge Tag">
-                        <input type="text" value="${p.block}" onchange="appData.parties[${idx}].block = this.value" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Block Name">
-                        <input type="text" value="${p.photo}" onchange="appData.parties[${idx}].photo = this.value" class="bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Foto URL (leer = kein Bild)">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" value="${p.name}" onchange="updateParty(${p.id}, 'name', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Name">
+                        <input type="text" value="${p.short}" onchange="updateParty(${p.id}, 'short', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Kürzel">
                     </div>
-                    <textarea onchange="appData.parties[${idx}].ideol = this.value" class="w-full bg-cardBg border border-white/20 rounded px-2 py-1 text-xs text-white" placeholder="Ideologie (mehrzeilig)..." rows="2">${p.ideol || ''}</textarea>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="number" value="${p.seats}" onchange="updateParty(${p.id}, 'seats', parseInt(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Sitze">
+                        <input type="number" step="0.1" value="${p.pct}" onchange="updateParty(${p.id}, 'pct', parseFloat(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="%">
+                        <input type="text" value="${p.diff}" onchange="updateParty(${p.id}, 'diff', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="+/- %">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="color" value="${p.color}" onchange="updateParty(${p.id}, 'color', this.value)" class="w-full h-7 bg-transparent border border-white/10 rounded cursor-pointer">
+                        <input type="text" value="${p.img}" onchange="updateParty(${p.id}, 'img', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Bild URL (Optional)">
+                    </div>
+                    <textarea onchange="updateParty(${p.id}, 'ideology', this.value)" class="w-full bg-black/60 border border-white/10 p-1 text-xs rounded text-white h-14" placeholder="Ideologie (mehrzeilig)">${p.ideology}</textarea>
                 `;
-                list.appendChild(item);
+                container.appendChild(item);
             });
+        }
 
-            const tickerList = document.getElementById('editorTickerList');
-            tickerList.innerHTML = '';
-            appData.ticker.forEach((t, idx) => {
-                const row = document.createElement('div');
-                row.className = "flex gap-2";
-                row.innerHTML = `
-                    <input type="text" value="${t}" onchange="appData.ticker[${idx}] = this.value" class="flex-1 bg-pitch border border-white/20 rounded px-3 py-1 text-xs text-white">
-                    <button onclick="appData.ticker.splice(${idx}, 1); populateEditor();" class="bg-red-600/30 text-red-400 px-3 py-1 rounded text-xs">Entfernen</button>
-                `;
-                tickerList.appendChild(row);
-            });
+        function updateParty(id, key, value) {
+            const p = parties.find(x => x.id === id);
+            if (p) {
+                p[key] = value;
+                renderAll();
+            }
         }
 
         function addParty() {
-            appData.parties.push({ name: "Neue Partei", percent: 5.0, delta: "+0.0", seats: 5, color: "#64748b", badge: "NEU", ideol: "Ideologie", block: "Unabhängig", photo: "" });
-            populateEditor();
+            const newId = parties.length ? Math.max(...parties.map(p => p.id)) + 1 : 1;
+            parties.push({ id: newId, name: 'NEUE PARTEI', short: 'NEU', seats: 10, pct: 5.0, diff: '+0.0%', color: '#6366f1', img: '', ideology: 'Zentrum', coalition: false });
+            renderAll();
         }
 
-        function removeParty(idx) {
-            appData.parties.splice(idx, 1);
-            populateEditor();
+        function removeParty(id) {
+            parties = parties.filter(p => p.id !== id);
+            renderAll();
         }
 
-        function saveEditor() {
-            appData.title = document.getElementById('editGlobalTitle').value;
-            appData.turnout = document.getElementById('editTurnout').value;
-            appData.counted = document.getElementById('editCounted').value;
-            toggleEditor();
-            renderApp();
-        }
-
+        // 4K HIGH RES EXPORT
         function export4K() {
-            const area = document.getElementById('exportArea');
-            html2canvas(area, { scale: 2, backgroundColor: '#030509' }).then(canvas => {
+            const exportArea = document.getElementById('export-area');
+            html2canvas(exportArea, {
+                scale: 2, // 2x Scaling for Crisp 4K Resolution
+                backgroundColor: '#030509',
+                useCORS: true
+            }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'wahl-studio-2026-4k.png';
+                link.download = `wahl_studio_4k_${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
         }
-
-        // Initial Load
-        renderApp();
     </script>
 </body>
 </html>
