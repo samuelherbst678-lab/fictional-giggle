@@ -96,30 +96,31 @@
             </div>
 
             <!-- MAIN PARLIAMENT SEAT DISTRIBUTION -->
-            <div id="parliament-section" class="pitch-card rounded-lg p-6 flex flex-col items-center justify-center relative min-h-[320px]">
+            <div id="parliament-section" class="pitch-card rounded-lg p-6 flex flex-col items-center justify-center relative min-h-[340px]">
                 <h3 class="text-sm font-semibold tech-font text-gray-400 mb-2 uppercase tracking-widest">Gesamte Sitzverteilung & Block-Mehrheiten</h3>
-                <div id="block-container" class="flex gap-4 mb-4 flex-wrap justify-center w-full max-w-2xl"></div>
+                
+                <!-- CUSTOM NAMED BLOCKS DISPLAY -->
+                <div id="block-container" class="flex gap-4 mb-4 flex-wrap justify-center w-full max-w-3xl"></div>
+                
                 <div class="relative w-[340px] h-[180px] flex justify-center items-center">
                     <canvas id="parliamentChart"></canvas>
                 </div>
             </div>
 
-            <!-- SEPARATE COALITION CALCULATOR WITH OWN CHART -->
-            <div id="coalition-section" class="pitch-card rounded-lg p-5 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="flex-1 w-full">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-semibold tech-font text-gray-300 uppercase tracking-wider">Koalitionsrechner</h3>
-                        <div id="coalition-status" class="text-xs font-bold tech-font px-3 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50">
-                            KEINE MEHRHEIT (0 / 127 Sitze)
-                        </div>
+            <!-- SEPARATE COALITION CALCULATOR WITH FULL SIZED HALFCIRCLE -->
+            <div id="coalition-section" class="pitch-card rounded-lg p-6 flex flex-col items-center justify-center relative min-h-[380px]">
+                <div class="flex justify-between items-center w-full mb-4">
+                    <h3 class="text-sm font-semibold tech-font text-gray-300 uppercase tracking-wider">Koalitionsrechner</h3>
+                    <div id="coalition-status" class="text-xs font-bold tech-font px-3 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50">
+                        KEINE MEHRHEIT (0 / 127 Sitze)
                     </div>
-                    <div id="coalition-buttons" class="flex flex-wrap gap-2 mb-2"></div>
                 </div>
 
-                <!-- DEDICATED COALITION SEAT CHART -->
-                <div class="flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
-                    <span class="text-[11px] font-bold tech-font text-gray-400 mb-2 uppercase">Koalitions-Sitzverteilung</span>
-                    <div class="relative w-[240px] h-[130px] flex justify-center items-center">
+                <div id="coalition-buttons" class="flex flex-wrap gap-2 mb-6 justify-center w-full"></div>
+
+                <div class="flex flex-col items-center justify-center w-full pt-2 border-t border-white/10">
+                    <span class="text-xs font-bold tech-font text-gray-400 mb-3 uppercase tracking-wider">Koalitions-Sitzverteilung</span>
+                    <div class="relative w-[340px] h-[180px] flex justify-center items-center">
                         <canvas id="coalitionChart"></canvas>
                     </div>
                 </div>
@@ -208,22 +209,22 @@
             ticker: '+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++ WAHLBETEILIGUNG AUF REKORDNIVEAU +++ ERSTE HOCHRECHNUNGEN ERWARTET +++ KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++'
         };
 
-        // SEPARATE DATASETS FOR INDEPENDENT EDITING
+        // PARLIAMENT PARTIES WITH CUSTOM BLOCK ASSIGNMENT
         let parliamentParties = [
-            { id: 1, name: 'GERB-SDS', short: 'GERB', seats: 36, pct: 26.4, diff: '+1.2%', color: '#2563eb', img: '', ideology: 'National Conservatism\nZionism\nRight-Wing', coalition: true },
-            { id: 2, name: 'PP-DB', short: 'PP-DB', seats: 20, pct: 14.2, diff: '-2.5%', color: '#06b6d4', img: '', ideology: 'Liberal Zionism\nCentre-Right\nPro-European', coalition: true },
-            { id: 3, name: 'Wusraschdane', short: 'VAZRAZHDANE', seats: 18, pct: 13.3, diff: '+0.8%', color: '#1e1b4b', img: '', ideology: 'Nationalism\nRight-Wing Populism\nFar-Right', coalition: false },
-            { id: 4, name: 'DPS-NN', short: 'DPS', seats: 18, pct: 11.5, diff: '+0.5%', color: '#0d9488', img: '', ideology: 'Israeli Arab Interests\nLiberalism\nLeft-Wing', coalition: true },
-            { id: 5, name: 'BSP-OL', short: 'BSP', seats: 12, pct: 7.5, diff: '-0.9%', color: '#1d4ed8', img: '', ideology: 'Social Democracy\nCentre-Left\nPro-Labor', coalition: false },
-            { id: 6, name: 'APS', short: 'APS', seats: 12, pct: 7.4, diff: '+7.4%', color: '#312e81', img: '', ideology: 'Ashkenazi Haredi Interests\nReligious Conservatism\nSocial Conservatism', coalition: false },
-            { id: 7, name: 'ITN', short: 'ITN', seats: 11, pct: 6.8, diff: '-0.3%', color: '#0284c7', img: '', ideology: 'Conservatism\nDirect Democracy\nRight-Wing', coalition: false }
+            { id: 1, name: 'GERB-SDS', short: 'GERB', seats: 36, pct: 26.4, diff: '+1.2%', color: '#2563eb', img: '', ideology: 'National Conservatism\nZionism\nRight-Wing', block: 'Regierungsblock', coalition: true },
+            { id: 2, name: 'PP-DB', short: 'PP-DB', seats: 20, pct: 14.2, diff: '-2.5%', color: '#06b6d4', img: '', ideology: 'Liberal Zionism\nCentre-Right\nPro-European', block: 'Regierungsblock', coalition: true },
+            { id: 3, name: 'Wusraschdane', short: 'VAZRAZHDANE', seats: 18, pct: 13.3, diff: '+0.8%', color: '#1e1b4b', img: '', ideology: 'Nationalism\nRight-Wing Populism\nFar-Right', block: 'Oppositionsblock', coalition: false },
+            { id: 4, name: 'DPS-NN', short: 'DPS', seats: 18, pct: 11.5, diff: '+0.5%', color: '#0d9488', img: '', ideology: 'Israeli Arab Interests\nLiberalism\nLeft-Wing', block: 'Regierungsblock', coalition: true },
+            { id: 5, name: 'BSP-OL', short: 'BSP', seats: 12, pct: 7.5, diff: '-0.9%', color: '#1d4ed8', img: '', ideology: 'Social Democracy\nCentre-Left\nPro-Labor', block: 'Linksblock', coalition: false },
+            { id: 6, name: 'APS', short: 'APS', seats: 12, pct: 7.4, diff: '+7.4%', color: '#312e81', img: '', ideology: 'Ashkenazi Haredi Interests\nReligious Conservatism\nSocial Conservatism', block: 'Oppositionsblock', coalition: false },
+            { id: 7, name: 'ITN', short: 'ITN', seats: 11, pct: 6.8, diff: '-0.3%', color: '#0284c7', img: '', ideology: 'Conservatism\nDirect Democracy\nRight-Wing', block: 'Oppositionsblock', coalition: false }
         ];
 
         let presidentialCandidates = [
-            { id: 101, name: 'Rumen Radev', short: 'RADEV', seats: 0, pct: 48.4, diff: '+3.1%', color: '#10b981', img: '', ideology: 'Independent\nPro-National\nIncumbent', coalition: false },
-            { id: 102, name: 'Anastas Gerdzhikov', short: 'GERDZHIKOV', seats: 0, pct: 31.6, diff: '-1.4%', color: '#3b82f6', img: '', ideology: 'Academic\nCenter-Right\nSupported by GERB', coalition: false },
-            { id: 103, name: 'Mustafa Karadayi', short: 'KARADAYI', seats: 0, pct: 11.5, diff: '+0.2%', color: '#06b6d4', img: '', ideology: 'DPS Nominee\nLiberal', coalition: false },
-            { id: 104, name: 'Lozan Panov', short: 'PANOV', seats: 0, pct: 4.1, diff: '-0.5%', color: '#8b5cf6', img: '', ideology: 'Judicial Reform\nPro-European', coalition: false }
+            { id: 101, name: 'Rumen Radev', short: 'RADEV', seats: 0, pct: 48.4, diff: '+3.1%', color: '#10b981', img: '', ideology: 'Independent\nPro-National\nIncumbent', block: '', coalition: false },
+            { id: 102, name: 'Anastas Gerdzhikov', short: 'GERDZHIKOV', seats: 0, pct: 31.6, diff: '-1.4%', color: '#3b82f6', img: '', ideology: 'Academic\nCenter-Right\nSupported by GERB', block: '', coalition: false },
+            { id: 103, name: 'Mustafa Karadayi', short: 'KARADAYI', seats: 0, pct: 11.5, diff: '+0.2%', color: '#06b6d4', img: '', ideology: 'DPS Nominee\nLiberal', block: '', coalition: false },
+            { id: 104, name: 'Lozan Panov', short: 'PANOV', seats: 0, pct: 4.1, diff: '-0.5%', color: '#8b5cf6', img: '', ideology: 'Judicial Reform\nPro-European', block: '', coalition: false }
         ];
 
         let usStates = [
@@ -292,8 +293,8 @@
             renderBarsAndIdeology();
             if (currentMode === 'parliament') {
                 renderParliamentChart();
-                renderCoalitionButtonsAndChart();
                 renderBlocks();
+                renderCoalitionButtonsAndChart();
             } else if (currentMode === 'us') {
                 renderUSGrid();
             }
@@ -345,7 +346,7 @@
             });
         }
 
-        // FULL PARLIAMENT SEAT CHART
+        // FULL PARLIAMENT CHART
         function renderParliamentChart() {
             const ctx = document.getElementById('parliamentChart').getContext('2d');
             if (parliamentChartInstance) parliamentChartInstance.destroy();
@@ -373,33 +374,35 @@
             });
         }
 
+        // AGGREGATE FREELY NAMED BLOCKS OVER SEATS
         function renderBlocks() {
             const container = document.getElementById('block-container');
             container.innerHTML = '';
 
-            const coalitionParties = parliamentParties.filter(p => p.coalition);
-            if (coalitionParties.length > 0) {
-                const coalitionSeats = coalitionParties.reduce((a, b) => a + b.seats, 0);
-                const strongest = [...coalitionParties].sort((a,b) => b.seats - a.seats)[0];
-                
-                const block1 = document.createElement('div');
-                block1.className = 'px-4 py-2 rounded text-white font-bold text-xs tech-font flex items-center gap-2 border border-white/10 shadow-lg';
-                block1.style.backgroundColor = strongest.color;
-                block1.innerHTML = `<span>GEWÄHLTE KOALITION: ${coalitionSeats} SITZE</span>`;
-                container.appendChild(block1);
-            }
+            const blockMap = {};
 
-            const topParty = [...parliamentParties].sort((a,b) => b.seats - a.seats)[0];
-            if (topParty) {
-                const block2 = document.createElement('div');
-                block2.className = 'px-4 py-2 rounded text-white font-bold text-xs tech-font flex items-center gap-2 border border-white/10 shadow-lg';
-                block2.style.backgroundColor = topParty.color;
-                block2.innerHTML = `<span>STÄRKSTE KRAFT (${topParty.short}): ${topParty.seats} SITZE</span>`;
-                container.appendChild(block2);
-            }
+            parliamentParties.forEach(p => {
+                const blockName = (p.block && p.block.trim() !== '') ? p.block.trim() : 'Sonstige';
+                if (!blockMap[blockName]) {
+                    blockMap[blockName] = { seats: 0, parties: [] };
+                }
+                blockMap[blockName].seats += p.seats;
+                blockMap[blockName].parties.push(p);
+            });
+
+            Object.keys(blockMap).forEach(blockName => {
+                const b = blockMap[blockName];
+                const strongestParty = [...b.parties].sort((x, y) => y.seats - x.seats)[0];
+
+                const blockBadge = document.createElement('div');
+                blockBadge.className = 'px-4 py-2 rounded text-white font-bold text-xs tech-font flex items-center gap-2 border border-white/10 shadow-lg uppercase tracking-wider';
+                blockBadge.style.backgroundColor = strongestParty.color;
+                blockBadge.innerHTML = `<span>${blockName}: ${b.seats} SITZE</span>`;
+                container.appendChild(blockBadge);
+            });
         }
 
-        // COALITION CALCULATOR & SEPARATE COALITION HALFCIRCLE CHART
+        // COALITION CALCULATOR WITH EQUAL SIZED HALFCIRCLE
         function renderCoalitionButtonsAndChart() {
             const container = document.getElementById('coalition-buttons');
             container.innerHTML = '';
@@ -424,7 +427,7 @@
                 btn.className = `px-3 py-1.5 rounded text-xs font-bold tech-font transition-all border ${p.coalition ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-105' : 'border-white/10 opacity-40'}`;
                 btn.style.backgroundColor = p.color;
                 btn.style.color = '#ffffff';
-                btn.innerText = `${p.short} (${p.seats})`;
+                btn.innerText = `${p.short} (${p.seats})${p.block ? ' • ' + p.block : ''}`;
                 container.appendChild(btn);
             });
 
@@ -437,17 +440,18 @@
                 statusEl.innerText = `KEINE MEHRHEIT (${totalSelectedSeats} / ${majorityThreshold} Sitze)`;
             }
 
-            // RENDER DEDICATED SECOND CHART FOR COALITION ONLY
+            // EQUAL-SIZED COALITION HALFCIRCLE CHART
             const ctx = document.getElementById('coalitionChart').getContext('2d');
             if (coalitionChartInstance) coalitionChartInstance.destroy();
 
             const cDataSeats = activeCoalitionParties.map(p => p.seats);
             const cColors = activeCoalitionParties.map(p => p.color);
 
-            // Add remaining seats to threshold as gray segment if not full
             const remainingSeats = maxSeats - totalSelectedSeats;
-            cDataSeats.push(remainingSeats);
-            cColors.push('rgba(255, 255, 255, 0.08)');
+            if (remainingSeats > 0) {
+                cDataSeats.push(remainingSeats);
+                cColors.push('rgba(255, 255, 255, 0.08)');
+            }
 
             coalitionChartInstance = new Chart(ctx, {
                 type: 'doughnut',
@@ -579,6 +583,10 @@
                         <input type="text" value="${p.name}" onchange="updateParty(${p.id}, 'name', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Name">
                         <input type="text" value="${p.short}" onchange="updateParty(${p.id}, 'short', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Kürzel">
                     </div>
+                    ${currentMode === 'parliament' ? `
+                    <div>
+                        <input type="text" value="${p.block || ''}" onchange="updateParty(${p.id}, 'block', this.value)" class="w-full bg-black/60 border border-cyan-500/30 p-1 text-xs rounded text-cyan-300" placeholder="Block-Name (z.B. Regierungsblock)">
+                    </div>` : ''}
                     <div class="grid grid-cols-3 gap-2">
                         <input type="number" value="${p.seats}" onchange="updateParty(${p.id}, 'seats', parseInt(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Sitze" ${currentMode === 'presidential' ? 'disabled' : ''}>
                         <input type="number" step="0.1" value="${p.pct}" onchange="updateParty(${p.id}, 'pct', parseFloat(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="%">
@@ -606,7 +614,7 @@
         function addParty() {
             const data = getActiveData();
             const newId = Date.now();
-            data.push({ id: newId, name: 'NEUER EINTRAG', short: 'NEU', seats: currentMode === 'parliament' ? 10 : 0, pct: 5.0, diff: '+0.0%', color: '#6366f1', img: '', ideology: 'Zentrum', coalition: false });
+            data.push({ id: newId, name: 'NEUER EINTRAG', short: 'NEU', seats: currentMode === 'parliament' ? 10 : 0, pct: 5.0, diff: '+0.0%', color: '#6366f1', img: '', ideology: 'Zentrum', block: 'Neuer Block', coalition: false });
             renderAll();
         }
 
