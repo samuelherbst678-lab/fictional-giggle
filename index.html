@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Wahl-Infografik Studio 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2canvas CDN for 4K Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #030509;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-futuristic {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #05070e; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+        
+        /* Futuristic Deep-Black Glass Cards */
+        .tv-card {
+            background: linear-gradient(180deg, rgba(10, 14, 26, 0.95) 0%, rgba(5, 7, 15, 0.98) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+        }
+        
+        /* Neon Glowing Sharp Broadcast Bars */
+        .sharp-bar {
+            border-radius: 0px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .sharp-bar:hover {
+            filter: brightness(1.25);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        /* High-Contrast Neon Badges */
+        .badge-gov { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-sup { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-opp { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-new { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+        .badge-inc { background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4); }
+
+        /* Swing State Gold Border Accent */
+        .swing-state-card {
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.4), inset 0 0 8px rgba(245, 158, 11, 0.15) !important;
+        }
+
+        /* SEAMLESS SINGLE-LINE CONTINUOUS BREAKING NEWS MARQUEE */
+        @keyframes ticker-slide {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+        
+        .marquee-track {
+            display: inline-flex;
+            white-space: nowrap;
+            will-change: transform;
+            animation: ticker-slide 35s linear infinite;
+        }
+        
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        /* Multiline Text Handling */
+        .no-clip-text {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+            text-overflow: clip !important;
+            hyphens: auto;
+        }
+
+        /* Neon Accent Grid lines */
+        .cyber-grid {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-[#030509] text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black cyber-grid">
+
+    <!-- BREAKING NEWS TICKER BANNER (Flüssig & Perfekt Einzeilig) -->
+    <div id="breaking-news-banner" class="bg-gradient-to-r from-red-800 via-red-600 to-red-800 border-b border-red-500/50 text-white flex items-center overflow-hidden h-10 shadow-2xl relative z-50">
+        <div class="bg-black/95 text-red-500 px-4 h-full flex items-center font-black text-xs tracking-wider uppercase z-20 shrink-0 border-r border-red-500/40 gap-2 shadow-lg">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+            <span class="font-futuristic">BREAKING NEWS</span>
+        </div>
+        <div class="overflow-hidden w-full flex items-center relative h-full">
+            <div id="ticker-content" class="marquee-track text-xs font-black tracking-wide font-mono items-center">
+                <!-- Ticker content rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Navigation Bar -->
+    <header class="bg-[#060913]/90 border-b border-white/10 backdrop-blur-xl sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div id="header-flag-container" class="bg-cyan-500/10 border border-cyan-500/40 p-2 rounded-xl text-cyan-400 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
+                    <span id="header-flag-icon" class="text-xl leading-none">🌐</span>
+                </div>
+                <div>
+                    <h1 class="font-black text-base sm:text-lg text-white tracking-wider flex items-center gap-2 font-futuristic">
+                        <span id="header-title" class="bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">Wahl-Infografik Studio</span>
+                    </h1>
+                    <p class="text-[10px] text-cyan-400/80 font-mono font-bold tracking-widest uppercase">CYBER TV LIVE GRAPHICS STUDIO</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- 4K UHD EXPORT BUTTON -->
+                <button onclick="exportTo4K()" title="Als 4K Ultra-HD PNG exportieren" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow transition">
+                    <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
+                    <span class="hidden sm:inline">4K Export</span>
+                </button>
+
+                <div class="bg-[#020408] p-1 rounded-xl border border-white/10 flex text-xs font-bold">
+                    <button id="nav-parliamentary" onclick="switchDashboardMode('parliamentary')" class="px-3.5 py-1.5 rounded-lg transition bg-cyan-500 text-black font-extrabold shadow-lg shadow-cyan-500/20">Parlament</button>
+                    <button id="nav-presidential" onclick="switchDashboardMode('presidential')" class="px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white">Präsident</button>
+                    <button id="nav-us" onclick="switchDashboardMode('us')" class="px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white">US-Wahl</button>
+                </div>
+
+                <button onclick="openEditorModal()" class="bg-slate-900/80 hover:bg-slate-800 text-cyan-400 border border-cyan-500/30 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-cyan-950/40 transition hover:border-cyan-400">
+                    <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="hidden sm:inline">Editor</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main id="export-dashboard-area" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Top Global Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-[#070a14]/90 border border-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur shadow-xl">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase text-slate-400 tracking-widest">Auszählung</span>
+                    <div id="stat-counted-val" class="text-xl font-black text-white mt-0.5 font-futuristic">100.0%</div>
+                </div>
+                <div class="w-12 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/10 hidden sm:block">
+                    <div id="stat-counted-bar" class="bg-cyan-400 h-full rounded-full shadow-lg shadow-cyan-400/50" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <div class="bg-[#070a14]/90 border border-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur shadow-xl">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase text-slate-400 tracking-widest">Beteiligung</span>
+                    <div id="stat-turnout-val" class="text-xl font-black text-emerald-400 mt-0.5 font-futuristic">40.5%</div>
+                </div>
+                <i data-lucide="users" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+
+            <div class="bg-[#070a14]/90 border border-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur shadow-xl">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase text-slate-400 tracking-widest">Mehrheit</span>
+                    <div class="text-xl font-black text-amber-400 mt-0.5 font-futuristic"><span id="stat-majority-val">61 Sitze</span></div>
+                </div>
+                <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
+            </div>
+
+            <div class="bg-[#070a14]/90 border border-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur shadow-xl">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase text-slate-400 tracking-widest">Kategorie</span>
+                    <div class="text-sm font-black text-cyan-300 mt-0.5 truncate font-futuristic"><span id="stat-country-val">Parlamentswahl</span></div>
+                </div>
+                <i data-lucide="globe" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+        </div>
+
+        <!-- DASHBOARD 1: PARLIAMENTARY ELECTION -->
+        <div id="dashboard-parliamentary" class="space-y-6">
+            <div class="tv-card rounded-2xl p-6 space-y-6">
+
+                <!-- 1. Full-Width Main Vertical Bars Section -->
+                <div class="space-y-4 border-b border-white/10 pb-6">
+                    <h3 class="text-xs font-mono font-bold uppercase text-cyan-400 tracking-widest flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-cyan-400"></i> Wahlergebnis nach Parteien
+                    </h3>
+                    <div class="w-full overflow-x-auto pb-4 custom-scrollbar">
+                        <div id="parliamentary-bars-container" class="w-full pt-4 px-2"></div>
+                    </div>
+                </div>
+
+                <!-- 2. Parliament Hemicycle & Dynamic Block Majorities -->
+                <div class="bg-[#050812]/90 p-5 rounded-2xl border border-white/10 space-y-5">
+                    
+                    <!-- Dynamische Block-Mehrheiten direkt über dem Parlaments-Halbkreis -->
+                    <div id="blocs-summary-container" class="space-y-2 bg-[#020408] p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between items-center text-xs font-black">
+                            <div class="flex items-center gap-2">
+                                <span id="bloc-1-dot" class="w-3 h-3 rounded-sm bg-blue-500"></span>
+                                <span id="bloc-1-label" class="text-slate-200 font-mono tracking-wider uppercase">OPPOSITION BLOCK</span>
+                            </div>
+                            <div id="bloc-center-seats" class="text-slate-400 font-mono text-xs">18 Neutral</div>
+                            <div class="flex items-center gap-2">
+                                <span id="bloc-2-label" class="text-slate-200 font-mono tracking-wider uppercase">REGIERUNGS BLOCK</span>
+                                <span id="bloc-2-dot" class="w-3 h-3 rounded-sm bg-emerald-500"></span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-[#03050a] rounded-xl h-8 p-1 flex border border-white/10 font-mono font-bold text-xs text-white">
+                            <div id="bloc-1-bar" class="h-full rounded-l-lg flex items-center justify-center transition-all duration-300 shadow" style="width: 40%">48</div>
+                            <div id="bloc-center-bar" class="bg-slate-800 h-full flex items-center justify-center transition-all duration-300" style="width: 15%">18</div>
+                            <div id="bloc-2-bar" class="h-full rounded-r-lg flex items-center justify-center transition-all duration-300 shadow" style="width: 45%">54</div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-xs font-bold font-mono">
+                            <span id="bloc-1-seats" class="text-blue-400">48 Sitze</span>
+                            <span id="bloc-2-seats" class="text-emerald-400">54 Sitze</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-2">
+                        <div>
+                            <h3 class="text-xs font-mono font-bold uppercase text-white tracking-wider flex items-center gap-2">
+                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Sitzverteilung im Parlament
+                            </h3>
+                            <p class="text-[11px] text-slate-400">Halbkreis-Visualisierung aller Sitzmandate</p>
+                        </div>
+                        <div class="bg-[#020408] px-3.5 py-1.5 rounded-xl border border-white/10 flex items-center gap-3 text-xs font-bold">
+                            <span class="text-slate-400 font-mono">Absolutes Quorum:</span>
+                            <span id="parliament-majority-threshold" class="text-amber-400 font-mono text-sm">61 Sitze</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <div class="lg:col-span-5 relative flex items-center justify-center py-2">
+                            <div class="w-full max-w-[340px] h-48 relative">
+                                <canvas id="parliamentHemicycleChart"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-end pb-4 pointer-events-none">
+                                    <span id="parliament-total-seats" class="text-3xl font-black text-white leading-none font-futuristic">120</span>
+                                    <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Sitze Gesamt</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7">
+                            <div id="parliament-legend-list" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 max-h-52 overflow-y-auto custom-scrollbar text-xs"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- KOALITIONSRECHNER SECTION -->
+            <div class="tv-card rounded-2xl p-6 space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
+                    <div>
+                        <h3 class="text-lg font-black text-white flex items-center gap-2 font-futuristic">
+                            <i data-lucide="calculator" class="w-5 h-5 text-cyan-400"></i> Interaktiver Koalitionsrechner
+                        </h3>
+                        <p class="text-xs text-slate-400">Wähle Bündnispartner – Ausgewählte Parteien kleben im Halbkreis zusammen</p>
+                    </div>
+
+                    <div id="coalition-status-badge" class="px-4 py-2 rounded-xl font-mono font-bold text-xs uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30">
+                        <span id="coalition-status-text">Keine Mehrheit</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="flex items-center gap-2 bg-[#020408] p-1 rounded-xl border border-white/10 w-fit text-xs font-bold">
+                            <button id="coalition-mode-parties" onclick="setCoalitionCalcMode('parties')" class="px-3 py-1 rounded-lg bg-cyan-500 text-black font-extrabold">Nach Parteien</button>
+                            <button id="coalition-mode-blocks" onclick="setCoalitionCalcMode('blocks')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white">Nach Blöcken</button>
+                        </div>
+                        <div id="coalition-party-checkboxes" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar p-1"></div>
+                    </div>
+
+                    <div class="lg:col-span-5 bg-[#020408] p-5 rounded-2xl border border-white/10 flex flex-col items-center justify-center space-y-3">
+                        <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">Bündnis-Halbkreis</span>
+                        <div class="w-full max-w-[320px] h-48 relative">
+                            <canvas id="coalition-hemicycle-canvas"></canvas>
+                            <div class="absolute inset-0 flex flex-col items-center justify-end pb-3 pointer-events-none">
+                                <span id="coalition-seats-val" class="text-3xl font-black text-white leading-none font-futuristic">0</span>
+                                <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Sitze (Benötigt: <span id="coalition-needed-val" class="text-amber-400">61</span>)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD 2: PRÄSIDENTSCHAFTSWAHL -->
+        <div id="dashboard-presidential" class="space-y-6 hidden">
+            <div class="tv-card rounded-2xl p-6 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-5">
+                    <div>
+                        <span class="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">PRÄSIDENTSCHAFTSWAHL</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1 font-futuristic">Kandidaten & Ergebnisse</h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <button onclick="togglePresidentialRunoffMode()" class="bg-[#020408] hover:bg-slate-800 border border-white/10 text-white px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition">
+                            <i data-lucide="repeat" class="w-4 h-4 text-cyan-400"></i>
+                            <span id="presidential-mode-label">Modus: 1. Wahlgang</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full overflow-x-auto pb-4 custom-scrollbar">
+                    <div id="presidential-bars-container" class="flex justify-center items-end gap-6 min-w-[600px] min-h-[540px] px-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD 3: US-PRÄSIDENTSCHAFTSWAHL -->
+        <div id="dashboard-us" class="space-y-6 hidden">
+            <div class="tv-card rounded-2xl p-6 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-4">
+                    <div>
+                        <span class="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">US ELECTORAL COLLEGE 538</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1 font-futuristic">US-Präsidentschaftswahl Manuelle Staaten-Liste</h2>
+                    </div>
+                    <div class="flex items-center gap-4 bg-[#020408] px-4 py-2 rounded-xl border border-white/10 font-mono">
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-blue-600"></span><span class="text-xs font-bold text-slate-300">Demokraten: <strong id="us-dem-votes" class="text-white">0</strong></span></div>
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-red-600"></span><span class="text-xs font-bold text-slate-300">Republikaner: <strong id="us-gop-votes" class="text-white">0</strong></span></div>
+                        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-emerald-600"></span><span class="text-xs font-bold text-slate-300">Andere: <strong id="us-oth-votes" class="text-white">0</strong></span></div>
+                    </div>
+                </div>
+
+                <!-- 270 To Win Progress Bar -->
+                <div class="space-y-2 bg-[#020408] p-4 rounded-xl border border-white/10">
+                    <div class="flex justify-between text-xs font-black font-mono">
+                        <span class="text-blue-400">Demokraten (<span id="bar-dem-num">0</span>)</span>
+                        <span class="text-amber-400 uppercase tracking-widest">Mehrheit: 270 Wahlmänner</span>
+                        <span class="text-red-400">Republikaner (<span id="bar-gop-num">0</span>)</span>
+                    </div>
+                    <div class="w-full h-7 bg-[#050812] rounded-lg overflow-hidden flex relative border border-white/10">
+                        <div id="us-progress-dem" class="bg-blue-600 h-full transition-all duration-300 flex items-center justify-center text-[10px] font-black text-white font-mono" style="width: 0%"></div>
+                        <div id="us-progress-oth" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="us-progress-neut" class="bg-slate-800 h-full transition-all duration-300" style="width: 100%"></div>
+                        <div id="us-progress-gop" class="bg-red-600 h-full transition-all duration-300 flex items-center justify-center text-[10px] font-black text-white font-mono" style="width: 0%"></div>
+                        <!-- 270 threshold indicator -->
+                        <div class="absolute top-0 bottom-0 w-0.5 bg-amber-400 z-10 shadow" style="left: calc(270 / 538 * 100%)">
+                            <span class="absolute -top-5 -translate-x-1/2 text-[9px] font-black text-amber-400 bg-black px-1 rounded border border-amber-400/50">270</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Manual States Grid List -->
+                <div class="bg-[#020408] p-4 rounded-2xl border border-white/10 space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-cyan-400"></i> Staaten-Kacheln (Klick zum Umschalten • Swing States in Gold)
+                        </span>
+                        <input type="text" id="us-search-input" oninput="filterUSStates(this.value)" placeholder="Staat suchen (z. B. PA, Texas)..." class="bg-[#070a14] border border-white/10 rounded-xl px-3 py-1 text-xs text-white outline-none w-full sm:w-56 focus:border-cyan-400">
+                    </div>
+
+                    <div id="us-states-grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 max-h-[460px] overflow-y-auto custom-scrollbar p-1"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL EDITOR -->
+    <div id="editor-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#070a14] border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="bg-[#020408] p-4 border-b border-white/10 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-cyan-400"></i>
+                    <h3 class="font-black text-white text-base font-futuristic">Wahl-Studio Editor</h3>
+                </div>
+                <button onclick="closeEditorModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
+                <!-- Global Config -->
+                <div class="bg-[#020408] p-4 rounded-xl border border-white/10 space-y-4">
+                    <h4 class="text-xs font-mono font-bold uppercase text-cyan-400 tracking-wider">TV Header & Kopfdaten</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="text-[10px] font-mono font-bold text-slate-400 block mb-1">TITEL DER WAHL</label>
+                            <input type="text" id="input-election-title" value="Wahl-Infografik Studio" oninput="updateGeneralConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-mono font-bold text-slate-400 block mb-1">FLAGGE / EMOJI</label>
+                            <input type="text" id="input-flag-icon" value="🌐" oninput="updateGeneralConfig()" placeholder="z. B. 🌐 oder leer lassen" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-mono font-bold text-slate-400 block mb-1">BETEILIGUNG (%)</label>
+                            <input type="text" id="input-voter-turnout" value="40.5%" oninput="updateGeneralConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-mono font-bold text-slate-400 block mb-1">AUSZÄHLUNG (%)</label>
+                            <input type="text" id="input-counted-status" value="100.0%" oninput="updateGeneralConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-cyan-400">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-white/5">
+                        <div>
+                            <label class="text-[10px] font-mono font-bold text-slate-400 block mb-1">GESAMTSITZE PARLAMENT</label>
+                            <input type="number" id="input-total-seats" value="120" oninput="updateGeneralConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-cyan-400">
+                        </div>
+                        <div class="flex items-center pt-5">
+                            <label class="text-[11px] font-bold text-slate-300 cursor-pointer flex items-center gap-2">
+                                <input type="checkbox" id="input-show-neutral-block" checked onchange="toggleNeutralBlockSetting(this.checked)" class="accent-cyan-400 w-4 h-4 rounded">
+                                Neutralen Block im Parlament anzeigen
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BREAKING NEWS TICKER CONFIGURATOR -->
+                <div class="bg-[#020408] p-4 rounded-xl border border-white/10 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-mono font-bold uppercase text-red-400 tracking-wider flex items-center gap-2">
+                            <i data-lucide="radio" class="w-4 h-4 text-red-500"></i> Breaking News Ticker Meldungen (Bis zu 4)
+                        </h4>
+                        <label class="text-[11px] font-bold text-slate-300 cursor-pointer flex items-center gap-2">
+                            <input type="checkbox" id="input-ticker-enabled" checked onchange="toggleTickerEnabled(this.checked)" class="accent-red-600 w-4 h-4 rounded">
+                            Ticker Aktiv
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] font-mono font-bold text-slate-400 block mb-0.5">MELDUNG 1</label>
+                            <input type="text" id="input-news-1" value="+++ EILMELDUNG: Wahllokale in den wichtigsten Bundesstaaten geschlossen +++" oninput="updateTickerConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-red-400">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-mono font-bold text-slate-400 block mb-0.5">MELDUNG 2</label>
+                            <input type="text" id="input-news-2" value="+++ Hochrechnungen zeigen ein extrem knappes Rennen um die absolute Mehrheit +++" oninput="updateTickerConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-red-400">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-mono font-bold text-slate-400 block mb-0.5">MELDUNG 3</label>
+                            <input type="text" id="input-news-3" value="+++ Swing States entscheiden über die Vergabe der 538 Electoral Votes +++" oninput="updateTickerConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-red-400">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-mono font-bold text-slate-400 block mb-0.5">MELDUNG 4</label>
+                            <input type="text" id="input-news-4" value="+++ Wahlbeteiligung erreicht mit geschätzten 40.5% neuen Höchststand +++" oninput="updateTickerConfig()" class="w-full bg-[#070a14] border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-red-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Editor List -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 id="editor-list-title" class="text-xs font-mono font-bold uppercase text-cyan-400 tracking-wider">Einträge bearbeiten</h4>
+                        <button id="add-entry-btn" onclick="addNewEntry()" class="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 transition">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> + Eintrag hinzufügen
+                        </button>
+                    </div>
+                    <div id="editor-entries-list" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="bg-[#020408] p-4 border-t border-white/10 flex justify-between items-center">
+                <button onclick="resetToDefaults()" class="text-slate-400 hover:text-slate-200 text-xs underline font-semibold">Standard-Daten wiederherstellen</button>
+                <button onclick="closeEditorModal()" class="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-2 rounded-xl text-xs font-extrabold tracking-wider transition">
+                    Speichern & Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logic Engine -->
+    <script>
+        // Global State Management
+        let currentMode = 'parliamentary';
+        let electionTitle = "Wahl-Infografik Studio";
+        let flagIcon = "🌐";
+        let voterTurnout = "40.5%";
+        let countedStatus = "100.0%";
+        let totalParliamentSeats = 120;
+        let showNeutralBlock = true;
+        let coalitionCalcMode = 'parties';
+        let selectedCoalitionPartyIds = [];
+        let isPresidentialRunoff = false;
+
+        // Breaking News Ticker State Initializer
+        let tickerEnabled = true;
+        let tickerNewsItems = [
+            "+++ EILMELDUNG: Wahllokale in den wichtigsten Bundesstaaten geschlossen +++",
+            "+++ Hochrechnungen zeigen ein extrem knappes Rennen um die absolute Mehrheit +++",
+            "+++ Swing States entscheiden über die Vergabe der 538 Electoral Votes +++",
+            "+++ Wahlbeteiligung erreicht mit geschätzten 40.5% neuen Höchststand +++"
+        ];
+
+        // Parliamentary dataset
+        let parliamentaryData = [
+            { id: 1, name: "GERB-SDS", party: "GERB", image: "", statusTag: "Gov.", seats: 36, percent: 26.4, changeVal: "+1.2", orientation: "National Conservatism\nZionism\nRight-Wing", color: "#2563eb" },
+            { id: 2, name: "PP-DB", party: "PP-DB", image: "", statusTag: "Opp.", seats: 20, percent: 14.2, changeVal: "-2.5", orientation: "Liberal Zionism\nCentre-Right\nPro-European", color: "#06b6d4" },
+            { id: 3, name: "Wusraschdane", party: "Vazrazhdane", image: "", statusTag: "Opp.", seats: 18, percent: 13.3, changeVal: "+0.8", orientation: "Nationalism\nRight-Wing Populism\nFar-Right", color: "#1e1b4b" },
+            { id: 4, name: "DPS-NN", party: "DPS", image: "", statusTag: "Gov.", seats: 18, percent: 11.5, changeVal: "+0.5", orientation: "Israeli Arab Interests\nLiberalism\nLeft-Wing", color: "#0d9488" },
+            { id: 5, name: "BSP-OL", party: "BSP", image: "", statusTag: "Sup.", seats: 10, percent: 7.5, changeVal: "-0.9", orientation: "Social Democracy\nCentre-Left\nPro-Labor", color: "#1e3a8a" },
+            { id: 6, name: "APS", party: "APS", image: "", statusTag: "None", seats: 10, percent: 7.4, changeVal: "+7.4", orientation: "Ashkenazi Haredi Int.\nReligious Conservatism\nSocial Conservatism", color: "#312e81" },
+            { id: 7, name: "ITN", party: "ITN", image: "", statusTag: "Sup.", seats: 8, percent: 6.8, changeVal: "-0.4", orientation: "Conservatism\nDirect Democracy\nRight-Wing", color: "#0284c7" }
+        ];
+
+        // Presidential dataset
+        let presidentialData = [
+            { id: 101, name: "Iotova", party: "Indep.", image: "", isRunoff: true, percent: 34.8, changeVal: "+2.1", orientation: "Social Conservatism\nBulgarian Nationalism\nCentre-Left Support", color: "#0d9488" },
+            { id: 102, name: "Gyurov", party: "Indep.", image: "", isRunoff: true, percent: 32.0, changeVal: "-1.5", orientation: "Liberalism\nCentre • Centre-Right\nPro-EU & NATO", color: "#ea580c" },
+            { id: 103, name: "Kostadinov", party: "Vazrazhdane", image: "", isRunoff: false, percent: 12.5, changeVal: "+8.6", orientation: "National Conservatism\nRight-Wing Populism\nFar-Right", color: "#a16207" },
+            { id: 104, name: "Vasilev", party: "MECH", image: "", isRunoff: false, percent: 4.6, changeVal: "+0.5", orientation: "Nationalism\nRight-Wing Populism\nAnti-Establishment", color: "#1e3a8a" },
+            { id: 105, name: "Mihaylov", party: "Velichie", image: "", isRunoff: false, percent: 3.8, changeVal: "-0.2", orientation: "Nationalism\nRight-Wing Populism\nFar-Right", color: "#991b1b" }
+        ];
+
+        // US Electoral College dataset (Defaulting ALL states to neutral/grey)
+        let usStatesData = [
+            { id: 'AL', name: 'Alabama', ev: 9, status: 'neut', isSwing: false },
+            { id: 'AK', name: 'Alaska', ev: 3, status: 'neut', isSwing: false },
+            { id: 'AZ', name: 'Arizona', ev: 11, status: 'neut', isSwing: true },
+            { id: 'AR', name: 'Arkansas', ev: 6, status: 'neut', isSwing: false },
+            { id: 'CA', name: 'California', ev: 54, status: 'neut', isSwing: false },
+            { id: 'CO', name: 'Colorado', ev: 10, status: 'neut', isSwing: false },
+            { id: 'CT', name: 'Connecticut', ev: 7, status: 'neut', isSwing: false },
+            { id: 'DE', name: 'Delaware', ev: 3, status: 'neut', isSwing: false },
+            { id: 'FL', name: 'Florida', ev: 30, status: 'neut', isSwing: false },
+            { id: 'GA', name: 'Georgia', ev: 16, status: 'neut', isSwing: true },
+            { id: 'HI', name: 'Hawaii', ev: 4, status: 'neut', isSwing: false },
+            { id: 'ID', name: 'Idaho', ev: 4, status: 'neut', isSwing: false },
+            { id: 'IL', name: 'Illinois', ev: 19, status: 'neut', isSwing: false },
+            { id: 'IN', name: 'Indiana', ev: 11, status: 'neut', isSwing: false },
+            { id: 'IA', name: 'Iowa', ev: 6, status: 'neut', isSwing: false },
+            { id: 'KS', name: 'Kansas', ev: 6, status: 'neut', isSwing: false },
+            { id: 'KY', name: 'Kentucky', ev: 8, status: 'neut', isSwing: false },
+            { id: 'LA', name: 'Louisiana', ev: 8, status: 'neut', isSwing: false },
+            { id: 'ME', name: 'Maine', ev: 4, status: 'neut', isSwing: false },
+            { id: 'MD', name: 'Maryland', ev: 10, status: 'neut', isSwing: false },
+            { id: 'MA', name: 'Massachusetts', ev: 11, status: 'neut', isSwing: false },
+            { id: 'MI', name: 'Michigan', ev: 15, status: 'neut', isSwing: true },
+            { id: 'MN', name: 'Minnesota', ev: 10, status: 'neut', isSwing: false },
+            { id: 'MS', name: 'Mississippi', ev: 6, status: 'neut', isSwing: false },
+            { id: 'MO', name: 'Missouri', ev: 10, status: 'neut', isSwing: false },
+            { id: 'MT', name: 'Montana', ev: 4, status: 'neut', isSwing: false },
+            { id: 'NE', name: 'Nebraska', ev: 5, status: 'neut', isSwing: false },
+            { id: 'NV', name: 'Nevada', ev: 6, status: 'neut', isSwing: true },
+            { id: 'NH', name: 'New Hampshire', ev: 4, status: 'neut', isSwing: false },
+            { id: 'NJ', name: 'New Jersey', ev: 14, status: 'neut', isSwing: false },
+            { id: 'NM', name: 'New Mexico', ev: 5, status: 'neut', isSwing: false },
+            { id: 'NY', name: 'New York', ev: 28, status: 'neut', isSwing: false },
+            { id: 'NC', name: 'North Carolina', ev: 16, status: 'neut', isSwing: true },
+            { id: 'ND', name: 'North Dakota', ev: 3, status: 'neut', isSwing: false },
+            { id: 'OH', name: 'Ohio', ev: 17, status: 'neut', isSwing: false },
+            { id: 'OK', name: 'Oklahoma', ev: 7, status: 'neut', isSwing: false },
+            { id: 'OR', name: 'Oregon', ev: 8, status: 'neut', isSwing: false },
+            { id: 'PA', name: 'Pennsylvania', ev: 19, status: 'neut', isSwing: true },
+            { id: 'RI', name: 'Rhode Island', ev: 4, status: 'neut', isSwing: false },
+            { id: 'SC', name: 'South Carolina', ev: 9, status: 'neut', isSwing: false },
+            { id: 'SD', name: 'South Dakota', ev: 3, status: 'neut', isSwing: false },
+            { id: 'TN', name: 'Tennessee', ev: 11, status: 'neut', isSwing: false },
+            { id: 'TX', name: 'Texas', ev: 40, status: 'neut', isSwing: false },
+            { id: 'UT', name: 'Utah', ev: 6, status: 'neut', isSwing: false },
+            { id: 'VT', name: 'Vermont', ev: 3, status: 'neut', isSwing: false },
+            { id: 'VA', name: 'Virginia', ev: 13, status: 'neut', isSwing: false },
+            { id: 'WA', name: 'Washington', ev: 12, status: 'neut', isSwing: false },
+            { id: 'WV', name: 'West Virginia', ev: 4, status: 'neut', isSwing: false },
+            { id: 'WI', name: 'Wisconsin', ev: 10, status: 'neut', isSwing: true },
+            { id: 'WY', name: 'Wyoming', ev: 3, status: 'neut', isSwing: false },
+            { id: 'DC', name: 'Washington D.C.', ev: 3, status: 'neut', isSwing: false }
+        ];
+
+        let parliamentChartInstance = null;
+        let coalitionChartInstance = null;
+        let usSearchQuery = "";
+
+        function switchDashboardMode(mode) {
+            currentMode = mode;
+            document.getElementById('dashboard-parliamentary').classList.add('hidden');
+            document.getElementById('dashboard-presidential').classList.add('hidden');
+            document.getElementById('dashboard-us').classList.add('hidden');
+
+            document.getElementById('nav-parliamentary').className = "px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white";
+            document.getElementById('nav-presidential').className = "px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white";
+            document.getElementById('nav-us').className = "px-3.5 py-1.5 rounded-lg transition text-slate-400 hover:text-white";
+
+            if (mode === 'parliamentary') {
+                document.getElementById('dashboard-parliamentary').classList.remove('hidden');
+                document.getElementById('nav-parliamentary').className = "px-3.5 py-1.5 rounded-lg transition bg-cyan-500 text-black font-extrabold shadow-lg shadow-cyan-500/20";
+                document.getElementById('stat-country-val').innerText = "Parlamentswahl";
+            } else if (mode === 'presidential') {
+                document.getElementById('dashboard-presidential').classList.remove('hidden');
+                document.getElementById('nav-presidential').className = "px-3.5 py-1.5 rounded-lg transition bg-cyan-500 text-black font-extrabold shadow-lg shadow-cyan-500/20";
+                document.getElementById('stat-country-val').innerText = "Präsidentschaftswahl";
+            } else if (mode === 'us') {
+                document.getElementById('dashboard-us').classList.remove('hidden');
+                document.getElementById('nav-us').className = "px-3.5 py-1.5 rounded-lg transition bg-cyan-500 text-black font-extrabold shadow-lg shadow-cyan-500/20";
+                document.getElementById('stat-country-val').innerText = "US-Präsidentschaft";
+            }
+            renderAll();
+        }
+
+        function renderAll() {
+            renderTicker();
+            document.getElementById('header-title').innerText = electionTitle;
+            
+            const flagContainer = document.getElementById('header-flag-container');
+            const flagIconElem = document.getElementById('header-flag-icon');
+            if (flagIcon && flagIcon.trim() !== "") {
+                flagIconElem.innerText = flagIcon;
+                flagContainer.classList.remove('hidden');
+            } else {
+                flagContainer.classList.add('hidden');
+            }
+
+            document.getElementById('stat-turnout-val').innerText = voterTurnout;
+            document.getElementById('stat-counted-val').innerText = countedStatus;
+            
+            const numericCounted = parseFloat(countedStatus) || 100;
+            document.getElementById('stat-counted-bar').style.width = Math.min(100, Math.max(0, numericCounted)) + '%';
+
+            const majorityNeeded = Math.floor(totalParliamentSeats / 2) + 1;
+            document.getElementById('stat-majority-val').innerText = majorityNeeded + " Sitze";
+            document.getElementById('parliament-majority-threshold').innerText = majorityNeeded + " Sitze";
+            document.getElementById('coalition-needed-val').innerText = majorityNeeded;
+
+            if (currentMode === 'parliamentary') {
+                renderParliamentaryBars();
+                renderParliamentHemicycle();
+                renderCoalitionCalculator();
+            } else if (currentMode === 'presidential') {
+                renderPresidentialBars();
+            } else if (currentMode === 'us') {
+                renderUSMapDashboard();
+            }
+        }
+
+        // Ticker Renderer (Flüssig, Robust & Ohne Doppel-Wrap)
+        function renderTicker() {
+            const banner = document.getElementById('breaking-news-banner');
+            const tickerContainer = document.getElementById('ticker-content');
+            
+            if (!tickerEnabled) {
+                banner.classList.add('hidden');
+                return;
+            }
+            
+            banner.classList.remove('hidden');
+            const activeItems = tickerNewsItems.filter(item => item && item.trim() !== "");
+            if (activeItems.length === 0) {
+                banner.classList.add('hidden');
+                return;
+            }
+
+            const newsHTML = activeItems.map(text => `
+                <span class="inline-flex items-center px-6">
+                    <span class="text-white font-extrabold">${text}</span>
+                    <span class="text-amber-400 font-bold ml-6 font-mono">•</span>
+                </span>
+            `).join('');
+
+            // Set duplicated sequence for 100% infinite CSS marquee scrolling
+            tickerContainer.innerHTML = newsHTML + newsHTML;
+        }
+
+        // High Quality Canvas Render Export Engine
+        function exportTo4K() {
+            const target = document.getElementById('export-dashboard-area');
+            if (!target) return;
+
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin text-amber-400"></i> Rendering 4K...`;
+            if (window.lucide) lucide.createIcons();
+
+            html2canvas(target, {
+                backgroundColor: '#030509',
+                scale: 2.5,
+                useCORS: true,
+                logging: false,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${electionTitle.replace(/\s+/g, '_')}_4K_Graphics.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                btn.innerHTML = originalHTML;
+                if (window.lucide) lucide.createIcons();
+            }).catch(err => {
+                console.error("Export Fehler:", err);
+                btn.innerHTML = originalHTML;
+                if (window.lucide) lucide.createIcons();
+            });
+        }
+
+        // PARLIAMENTARY BARS RENDERER (Clean Grid, Unlimited Ideologies space)
+        function renderParliamentaryBars() {
+            const container = document.getElementById('parliamentary-bars-container');
+            container.innerHTML = '';
+
+            const sorted = [...parliamentaryData].sort((a, b) => b.percent - a.percent);
+            const maxVal = Math.max(...sorted.map(x => x.percent), 1);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'grid gap-4 items-end font-mono';
+            wrapper.style.gridTemplateColumns = `repeat(${sorted.length}, minmax(110px, 1fr))`;
+
+            sorted.forEach(party => {
+                const heightPercent = Math.max(12, (party.percent / maxVal) * 260);
+
+                const col = document.createElement('div');
+                col.className = 'flex flex-col items-center justify-end group';
+
+                let changeHTML = '';
+                if (party.changeVal) {
+                    const isPos = party.changeVal.startsWith('+');
+                    changeHTML = `<div class="text-[11px] font-bold ${isPos ? 'text-emerald-400' : 'text-red-400'} font-mono mb-1.5">${isPos ? '↑' : '↓'} ${party.changeVal}%</div>`;
+                }
+
+                let imgHTML = '';
+                if (party.image && party.image.trim() !== '') {
+                    imgHTML = `<img src="${party.image}" class="w-10 h-10 rounded-full border border-white/20 object-cover mb-2 shadow-lg">`;
+                }
+
+                let badgeClass = 'badge-new';
+                if (party.statusTag === 'Gov.') badgeClass = 'badge-gov';
+                if (party.statusTag === 'Opp.') badgeClass = 'badge-opp';
+                if (party.statusTag === 'Sup.') badgeClass = 'badge-sup';
+
+                const orientationLines = (party.orientation || '').split('\n').map(l => l.trim()).filter(l => l);
+                const orientationHTML = orientationLines.map(l => `<div class="text-[10px] text-slate-300 font-semibold leading-tight no-clip-text">${l}</div>`).join('');
+
+                col.innerHTML = `
+                    <!-- 1. Top Seats Number Alignment -->
+                    <div class="text-center mb-2">
+                        <div class="text-lg font-black text-white font-futuristic leading-none">${party.seats}</div>
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sitze</div>
+                    </div>
+
+                    <!-- 2. Sharp Neon Column Bar -->
+                    <div class="w-full max-w-[76px] flex flex-col items-center justify-end">
+                        <div class="w-full sharp-bar flex items-start justify-center pt-2 shadow-2xl relative" style="height: ${heightPercent}px; background: linear-gradient(180deg, ${party.color} 0%, ${party.color}dd 100%);">
+                            <span class="text-sm font-black text-white drop-shadow font-futuristic tracking-tight">${party.percent}%</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Details & Unlimited Ideology Footnote -->
+                    <div class="w-full text-center mt-3 flex flex-col items-center space-y-1">
+                        ${changeHTML}
+                        ${imgHTML}
+                        <div class="font-extrabold text-xs text-white no-clip-text">${party.name}</div>
+                        ${party.party ? `<span class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase ${badgeClass}">${party.party}</span>` : ''}
+                        <div class="pt-2 border-t border-white/10 w-full min-h-[140px] space-y-1">
+                            ${orientationHTML}
+                        </div>
+                    </div>
+                `;
+                wrapper.appendChild(col);
+            });
+
+            container.appendChild(wrapper);
+            updateDynamicBlocsBar(sorted);
+        }
+
+        // Update Blocs Bar above Hemicycle with strongest party's color
+        function updateDynamicBlocsBar(sortedParties) {
+            const govParties = sortedParties.filter(p => p.statusTag === 'Gov.');
+            const oppParties = sortedParties.filter(p => p.statusTag === 'Opp.');
+            const neutralParties = sortedParties.filter(p => p.statusTag !== 'Gov.' && p.statusTag !== 'Opp.');
+
+            const govSeats = govParties.reduce((sum, p) => sum + p.seats, 0);
+            const oppSeats = oppParties.reduce((sum, p) => sum + p.seats, 0);
+            const neutralSeats = neutralParties.reduce((sum, p) => sum + p.seats, 0);
+
+            const strongestGov = govParties.sort((a, b) => b.seats - a.seats)[0];
+            const strongestOpp = oppParties.sort((a, b) => b.seats - a.seats)[0];
+
+            const govColor = strongestGov ? strongestGov.color : '#10b981';
+            const oppColor = strongestOpp ? strongestOpp.color : '#3b82f6';
+
+            const total = totalParliamentSeats || 120;
+            const oppPct = Math.round((oppSeats / total) * 100);
+            const govPct = Math.round((govSeats / total) * 100);
+            const neutPct = 100 - oppPct - govPct;
+
+            document.getElementById('bloc-1-label').innerText = "OPPOSITION BLOCK";
+            document.getElementById('bloc-2-label').innerText = "REGIERUNGS BLOCK";
+            
+            document.getElementById('bloc-1-dot').style.backgroundColor = oppColor;
+            document.getElementById('bloc-2-dot').style.backgroundColor = govColor;
+
+            const b1 = document.getElementById('bloc-1-bar');
+            const b2 = document.getElementById('bloc-2-bar');
+            const bCenter = document.getElementById('bloc-center-bar');
+
+            b1.style.width = oppPct + '%';
+            b1.style.backgroundColor = oppColor;
+            b1.innerText = oppSeats;
+
+            b2.style.width = govPct + '%';
+            b2.style.backgroundColor = govColor;
+            b2.innerText = govSeats;
+
+            if (showNeutralBlock && neutralSeats > 0) {
+                bCenter.style.display = 'flex';
+                bCenter.style.width = neutPct + '%';
+                bCenter.innerText = neutralSeats;
+                document.getElementById('bloc-center-seats').innerText = neutralSeats + " Neutral";
+            } else {
+                bCenter.style.display = 'none';
+                document.getElementById('bloc-center-seats').innerText = "";
+            }
+
+            document.getElementById('bloc-1-seats').innerText = oppSeats + " Sitze";
+            document.getElementById('bloc-2-seats').innerText = govSeats + " Sitze";
+        }
+
+        // PARLIAMENT HEMICYCLE ARC CHART
+        function renderParliamentHemicycle() {
+            const ctx = document.getElementById('parliamentHemicycleChart').getContext('2d');
+            const legendList = document.getElementById('parliament-legend-list');
+            legendList.innerHTML = '';
+
+            const sorted = [...parliamentaryData].sort((a, b) => b.seats - a.seats);
+            document.getElementById('parliament-total-seats').innerText = totalParliamentSeats;
+
+            const labels = sorted.map(x => x.name);
+            const dataVals = sorted.map(x => x.seats);
+            const colors = sorted.map(x => x.color);
+
+            sorted.forEach(p => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-1.5 rounded-lg bg-[#020408] border border-white/5 font-mono";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2 truncate">
+                        <span class="w-3 h-3 rounded-sm shrink-0" style="background-color: ${p.color}"></span>
+                        <span class="text-white font-bold truncate">${p.name}</span>
+                    </div>
+                    <span class="text-slate-300 font-extrabold ml-2">${p.seats} S.</span>
+                `;
+                legendList.appendChild(item);
+            });
+
+            if (parliamentChartInstance) parliamentChartInstance.destroy();
+
+            parliamentChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataVals,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#050812'
+                    }]
+                },
+                options: {
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '62%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.raw} Sitze`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // KOALITIONSRECHNER LOGIK
+        function setCoalitionCalcMode(mode) {
+            coalitionCalcMode = mode;
+            document.getElementById('coalition-mode-parties').className = mode === 'parties' ? "px-3 py-1 rounded-lg bg-cyan-500 text-black font-extrabold" : "px-3 py-1 rounded-lg text-slate-400 hover:text-white";
+            document.getElementById('coalition-mode-blocks').className = mode === 'blocks' ? "px-3 py-1 rounded-lg bg-cyan-500 text-black font-extrabold" : "px-3 py-1 rounded-lg text-slate-400 hover:text-white";
+            selectedCoalitionPartyIds = [];
+            renderCoalitionCalculator();
+        }
+
+        function toggleCoalitionParty(id) {
+            if (selectedCoalitionPartyIds.includes(id)) {
+                selectedCoalitionPartyIds = selectedCoalitionPartyIds.filter(x => x !== id);
+            } else {
+                selectedCoalitionPartyIds.push(id);
+            }
+            renderCoalitionCalculator();
+        }
+
+        function toggleCoalitionBlock(tag) {
+            const blockPartyIds = parliamentaryData.filter(x => x.statusTag === tag).map(x => x.id);
+            const allSelected = blockPartyIds.every(id => selectedCoalitionPartyIds.includes(id));
+            if (allSelected) {
+                selectedCoalitionPartyIds = selectedCoalitionPartyIds.filter(id => !blockPartyIds.includes(id));
+            } else {
+                blockPartyIds.forEach(id => {
+                    if (!selectedCoalitionPartyIds.includes(id)) selectedCoalitionPartyIds.push(id);
+                });
+            }
+            renderCoalitionCalculator();
+        }
+
+        function renderCoalitionCalculator() {
+            const container = document.getElementById('coalition-party-checkboxes');
+            container.innerHTML = '';
+
+            if (coalitionCalcMode === 'parties') {
+                parliamentaryData.forEach(p => {
+                    const checked = selectedCoalitionPartyIds.includes(p.id);
+                    const btn = document.createElement('button');
+                    btn.onclick = () => toggleCoalitionParty(p.id);
+                    btn.className = `flex items-center justify-between p-2.5 rounded-xl border text-xs font-mono transition text-left ${checked ? 'bg-cyan-500/10 border-cyan-400 text-white shadow-lg' : 'bg-[#020408] border-white/10 text-slate-400 hover:border-slate-600'}`;
+                    btn.innerHTML = `
+                        <div class="flex items-center space-x-2 truncate">
+                            <span class="w-3 h-3 rounded-sm shrink-0" style="background-color: ${p.color}"></span>
+                            <span class="font-bold truncate">${p.name}</span>
+                        </div>
+                        <span class="font-black text-cyan-300 ml-2">${p.seats} S.</span>
+                    `;
+                    container.appendChild(btn);
+                });
+            } else {
+                const tags = [
+                    { tag: 'Gov.', label: 'Regierungs-Block' },
+                    { tag: 'Opp.', label: 'Oppositions-Block' },
+                    { tag: 'Sup.', label: 'Tolerierungs-Block' }
+                ];
+                tags.forEach(t => {
+                    const blockParties = parliamentaryData.filter(x => x.statusTag === t.tag);
+                    const blockSeats = blockParties.reduce((sum, x) => sum + x.seats, 0);
+                    const allChecked = blockParties.length > 0 && blockParties.every(x => selectedCoalitionPartyIds.includes(x.id));
+                    
+                    const btn = document.createElement('button');
+                    btn.onclick = () => toggleCoalitionBlock(t.tag);
+                    btn.className = `flex items-center justify-between p-3 rounded-xl border text-xs font-mono transition text-left ${allChecked ? 'bg-cyan-500/20 border-cyan-400 text-white' : 'bg-[#020408] border-white/10 text-slate-400 hover:border-slate-600'}`;
+                    btn.innerHTML = `
+                        <span class="font-extrabold text-white">${t.label}</span>
+                        <span class="font-black text-cyan-300">${blockSeats} Sitze</span>
+                    `;
+                    container.appendChild(btn);
+                });
+            }
+
+            const selectedParties = parliamentaryData.filter(x => selectedCoalitionPartyIds.includes(x.id));
+            const coalitionSeatsSum = selectedParties.reduce((sum, x) => sum + x.seats, 0);
+            const majorityNeeded = Math.floor(totalParliamentSeats / 2) + 1;
+
+            document.getElementById('coalition-seats-val').innerText = coalitionSeatsSum;
+            const statusBadge = document.getElementById('coalition-status-badge');
+            const statusText = document.getElementById('coalition-status-text');
+
+            if (coalitionSeatsSum >= majorityNeeded) {
+                statusBadge.className = "px-4 py-2 rounded-xl font-mono font-bold text-xs uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-lg shadow-emerald-500/10 animate-pulse";
+                statusText.innerText = " Absolute Mehrheit Erreicht!";
+            } else {
+                statusBadge.className = "px-4 py-2 rounded-xl font-mono font-bold text-xs uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30";
+                statusText.innerText = "Keine Mehrheit";
+            }
+
+            renderCoalitionChart(selectedParties, coalitionSeatsSum);
+        }
+
+        function renderCoalitionChart(selectedParties, coalitionSeatsSum) {
+            const ctx = document.getElementById('coalition-hemicycle-canvas').getContext('2d');
+            const remainingSeats = Math.max(0, totalParliamentSeats - coalitionSeatsSum);
+
+            const labels = [...selectedParties.map(x => x.name), "Restliche Sitze"];
+            const dataVals = [...selectedParties.map(x => x.seats), remainingSeats];
+            const colors = [...selectedParties.map(x => x.color), '#1e293b'];
+
+            if (coalitionChartInstance) coalitionChartInstance.destroy();
+
+            coalitionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataVals,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#050812'
+                    }]
+                },
+                options: {
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '62%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.raw} Sitze`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // PRESIDENTIAL ELECTION RENDERER
+        function togglePresidentialRunoffMode() {
+            isPresidentialRunoff = !isPresidentialRunoff;
+            document.getElementById('presidential-mode-label').innerText = isPresidentialRunoff ? "Modus: 2. Wahlgang (Stichwahl)" : "Modus: 1. Wahlgang";
+            renderPresidentialBars();
+        }
+
+        function renderPresidentialBars() {
+            const container = document.getElementById('presidential-bars-container');
+            container.innerHTML = '';
+
+            let list = [...presidentialData];
+            if (isPresidentialRunoff) {
+                list = list.filter(x => x.isRunoff);
+            }
+            list.sort((a, b) => b.percent - a.percent);
+            const maxVal = Math.max(...list.map(x => x.percent), 1);
+
+            list.forEach(cand => {
+                const heightPercent = Math.max(16, (cand.percent / maxVal) * 280);
+                const col = document.createElement('div');
+                col.className = 'flex flex-col items-center justify-end w-32 font-mono group';
+
+                let imgHTML = '';
+                if (cand.image && cand.image.trim() !== '') {
+                    imgHTML = `<img src="${cand.image}" class="w-16 h-16 rounded-full border-2 border-white/20 object-cover mb-3 shadow-xl">`;
+                }
+
+                const orientationLines = (cand.orientation || '').split('\n').map(l => l.trim()).filter(l => l);
+                const orientationHTML = orientationLines.map(l => `<div class="text-[10px] text-slate-300 font-semibold leading-tight no-clip-text">${l}</div>`).join('');
+
+                col.innerHTML = `
+                    <div class="w-full sharp-bar flex items-start justify-center pt-2 shadow-2xl relative" style="height: ${heightPercent}px; background: linear-gradient(180deg, ${cand.color} 0%, ${cand.color}dd 100%);">
+                        <span class="text-base font-black text-white font-futuristic tracking-tight">${cand.percent}%</span>
+                    </div>
+
+                    <div class="w-full text-center mt-3 flex flex-col items-center space-y-1">
+                        ${cand.changeVal ? `<div class="text-xs font-bold text-emerald-400 font-mono">↑ ${cand.changeVal}%</div>` : ''}
+                        ${imgHTML}
+                        <div class="font-black text-sm text-white no-clip-text font-futuristic">${cand.name}</div>
+                        ${cand.party ? `<span class="px-2.5 py-0.5 rounded text-[10px] font-black tracking-wider uppercase bg-slate-800 text-cyan-300 border border-white/10">${cand.party}</span>` : ''}
+                        <div class="pt-2 border-t border-white/10 w-full min-h-[140px] space-y-1">
+                            ${orientationHTML}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // US ELECTORAL COLLEGE MANUAL DASHBOARD (Default Neutral & Gold Swing Accent)
+        function toggleUSStateStatus(id) {
+            const st = usStatesData.find(s => s.id === id);
+            if (!st) return;
+            const seq = ['neut', 'dem', 'gop', 'oth'];
+            const nextIdx = (seq.indexOf(st.status) + 1) % seq.length;
+            st.status = seq[nextIdx];
+            renderUSMapDashboard();
+        }
+
+        function setUSStateStatusDirect(id, status) {
+            const st = usStatesData.find(s => s.id === id);
+            if (st) {
+                st.status = status;
+                renderUSMapDashboard();
+            }
+        }
+
+        function renderUSMapDashboard() {
+            const container = document.getElementById('us-states-grid-container');
+            container.innerHTML = '';
+
+            let demVotes = 0;
+            let gopVotes = 0;
+            let othVotes = 0;
+
+            usStatesData.forEach(st => {
+                if (st.status === 'dem') demVotes += st.ev;
+                if (st.status === 'gop') gopVotes += st.ev;
+                if (st.status === 'oth') othVotes += st.ev;
+            });
+
+            document.getElementById('us-dem-votes').innerText = demVotes;
+            document.getElementById('us-gop-votes').innerText = gopVotes;
+            document.getElementById('us-oth-votes').innerText = othVotes;
+
+            document.getElementById('bar-dem-num').innerText = demVotes;
+            document.getElementById('bar-gop-num').innerText = gopVotes;
+
+            document.getElementById('us-progress-dem').style.width = (demVotes / 538 * 100) + '%';
+            document.getElementById('us-progress-gop').style.width = (gopVotes / 538 * 100) + '%';
+            document.getElementById('us-progress-oth').style.width = (othVotes / 538 * 100) + '%';
+            document.getElementById('us-progress-neut').style.width = ((538 - demVotes - gopVotes - othVotes) / 538 * 100) + '%';
+
+            document.getElementById('us-progress-dem').innerText = demVotes > 20 ? demVotes : '';
+            document.getElementById('us-progress-gop').innerText = gopVotes > 20 ? gopVotes : '';
+
+            const filtered = usStatesData.filter(st => {
+                if (!usSearchQuery) return true;
+                return st.name.toLowerCase().includes(usSearchQuery) || st.id.toLowerCase().includes(usSearchQuery);
+            });
+
+            filtered.forEach(st => {
+                let bgClass = "bg-[#050812] border-white/10 text-slate-300";
+                if (st.status === 'dem') bgClass = "bg-blue-600/30 border-blue-500 text-blue-300 shadow-blue-500/20";
+                if (st.status === 'gop') bgClass = "bg-red-600/30 border-red-500 text-red-300 shadow-red-500/20";
+                if (st.status === 'oth') bgClass = "bg-emerald-600/30 border-emerald-500 text-emerald-300 shadow-emerald-500/20";
+
+                const swingClass = st.isSwing ? 'swing-state-card' : '';
+
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl border flex flex-col justify-between transition cursor-pointer font-mono relative overflow-hidden ${bgClass} ${swingClass}`;
+                card.onclick = () => toggleUSStateStatus(st.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-sm text-white">${st.id}</span>
+                        <span class="text-xs font-bold text-amber-400">${st.ev} EV</span>
+                    </div>
+                    <div class="text-[10px] truncate text-slate-400 font-bold my-1">${st.name}</div>
+
+                    <!-- Direct Color Buttons -->
+                    <div class="flex items-center gap-1 pt-1.5 border-t border-white/10" onclick="event.stopPropagation()">
+                        <button onclick="setUSStateStatusDirect('${st.id}', 'neut')" title="Grau / Neutral" class="w-3.5 h-3.5 rounded-full bg-slate-700 hover:scale-125 transition ${st.status === 'neut' ? 'ring-2 ring-white' : ''}"></button>
+                        <button onclick="setUSStateStatusDirect('${st.id}', 'dem')" title="Demokraten (Blau)" class="w-3.5 h-3.5 rounded-full bg-blue-500 hover:scale-125 transition ${st.status === 'dem' ? 'ring-2 ring-white' : ''}"></button>
+                        <button onclick="setUSStateStatusDirect('${st.id}', 'gop')" title="Republikaner (Rot)" class="w-3.5 h-3.5 rounded-full bg-red-500 hover:scale-125 transition ${st.status === 'gop' ? 'ring-2 ring-white' : ''}"></button>
+                        <button onclick="setUSStateStatusDirect('${st.id}', 'oth')" title="Andere (Grün)" class="w-3.5 h-3.5 rounded-full bg-emerald-500 hover:scale-125 transition ${st.status === 'oth' ? 'ring-2 ring-white' : ''}"></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = function() {
+            renderAll();
+            if (window.lucide) lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
